@@ -51,3 +51,4 @@ def load_courses_from_json():
 
 if __name__ == '__main__':
     load_courses_from_json()
+

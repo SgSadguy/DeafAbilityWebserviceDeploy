@@ -1,5 +1,6 @@
 # models.py
 from django.db import models
+from django.conf import settings
 
 class Course(models.Model):
     name = models.CharField(max_length=200, verbose_name="ชื่อคอร์ส")
@@ -21,11 +22,32 @@ class Lesson(models.Model):
     order = models.PositiveIntegerField(default=0, verbose_name="ลำดับ")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
     class Meta:
         verbose_name = "บทเรียน"
         verbose_name_plural = "บทเรียน"
-        ordering = ['course', 'order']
+        ordering = ['course', 'order', 'id']
+        constraints = [
+            models.UniqueConstraint(fields=['course', 'order'], name='uniq_lesson_order_per_course')
+        ]
     def __str__(self): return f"{self.course.name} - {self.title}"
+
+
+class LessonProgress(models.Model):
+    user   = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='lesson_progress')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lesson_progress')
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='progress')
+    completed = models.BooleanField(default=False)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('user', 'lesson')  # 1 user ต่อ 1 lesson
+        indexes = [
+            models.Index(fields=['user', 'course', 'lesson']),
+        ]
+
+    def __str__(self):
+        return f'{self.user} / {self.course} / {self.lesson} / {"done" if self.completed else "pending"}'
 
 class LessonLink(models.Model):
     KIND_CHOICES = [

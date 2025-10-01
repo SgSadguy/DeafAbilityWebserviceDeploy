@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Lesson, LessonLink
+from .models import Course, Lesson, LessonLink, LessonProgress
 from urllib.parse import urlparse, parse_qs
 
 def youtube_embed(u: str):
@@ -36,18 +36,52 @@ class LessonLinkSerializer(serializers.ModelSerializer):
         if obj.kind == "youtube" and obj.url:
             return youtube_embed(obj.url)
         return None
-class LessonSerializer(serializers.ModelSerializer):
+    
+class CourseProgressSerializer(serializers.Serializer):
+    course_id = serializers.IntegerField()
+    total_lessons = serializers.IntegerField()
+    completed_lessons = serializers.IntegerField()
+    percent = serializers.FloatField()
 
+class LessonSerializer(serializers.ModelSerializer):
     links = LessonLinkSerializer(many=True, read_only=True)
+    next_lesson_id = serializers.SerializerMethodField()
+    is_last_lesson = serializers.SerializerMethodField()
+    completed = serializers.SerializerMethodField()  
 
     class Meta:
         model = Lesson
-        fields = ['id', 'title', 'description', 'order', 'links', 'created_at', 'updated_at']
+        fields = ['id','title','description','order','links',
+                  'next_lesson_id','is_last_lesson','completed',
+                  'created_at','updated_at']
+
+    def _user(self):
+        req = self.context.get('request')
+        return getattr(req, 'user', None) if req else None
+
+    def get_next_lesson_id(self, obj):
+        nxt = (Lesson.objects
+               .filter(course=obj.course, order__gt=obj.order)
+               .order_by('order','id')
+               .first())
+        return nxt.id if nxt else None
+
+    def get_is_last_lesson(self, obj):
+        return not Lesson.objects.filter(course=obj.course, order__gt=obj.order).exists()
+
+    def get_completed(self, obj):
+        user = self._user()
+        if not user or not user.is_authenticated:
+            return False
+        return LessonProgress.objects.filter(user=user, lesson=obj, completed=True).exists()
+
+    
 class CourseSerializer(serializers.ModelSerializer):
     lessons = LessonSerializer(many=True, read_only=True)
     
     class Meta:
         model = Course
         fields = ['id', 'name', 'level', 'category', 'description', 'lessons', 'created_at', 'updated_at']
+
 
 

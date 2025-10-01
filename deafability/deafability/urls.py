@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from courses.views import CourseViewSet, course_list, course_detail, lesson_detail, enroll_course
+from courses.views import CourseViewSet, csrf_bootstrap ,course_list, course_detail, lesson_detail, enroll_course,lesson_complete, course_progress,reset_course_progress
 
 router = DefaultRouter()
 router.register(r'courses', CourseViewSet)
@@ -25,8 +25,13 @@ router.register(r'courses', CourseViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('api/csrf/', csrf_bootstrap),
     path('api/courses-list/', course_list, name='course-list'),
     path('api/courses/<int:course_id>/', course_detail, name='course-detail'),
     path('api/courses/<int:course_id>/enroll/', enroll_course, name='enroll-course'),
     path('api/courses/<int:course_id>/lessons/<int:lesson_id>/', lesson_detail, name='lesson-detail'),
+    path('api/courses/<int:course_id>/progress/', course_progress, name='course_progress'),
+    path('api/courses/<int:course_id>/lessons/<int:lesson_id>/complete/', lesson_complete, name='lesson_complete'),
+    
+    path('api/courses/<int:course_id>/reset_progress/', reset_course_progress),
 ]

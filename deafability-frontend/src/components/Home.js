@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Home = () => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,8 +65,8 @@ const Home = () => {
     return [...new Set(courses.map(course => course.category))];
   };
 
-  const handleCourseClick = (courseId, courseName) => {
-    alert(`คลิกที่คอร์ส: ${courseName}\nID: ${courseId}`);
+  const handleCourseClick = (courseId) => {
+    navigate(`/course/${courseId}`);
   };
 
   if (loading) {
@@ -169,7 +171,7 @@ const Home = () => {
             <div
               key={course.id}
               className="course-card"
-              onClick={() => handleCourseClick(course.id, course.name)}
+              onClick={() => handleCourseClick(course.id)}
             >
               <div className="course-title">{course.name}</div>
               <div className="course-info">

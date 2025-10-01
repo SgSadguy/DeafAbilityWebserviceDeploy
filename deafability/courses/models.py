@@ -1,6 +1,5 @@
+# models.py
 from django.db import models
-
-# Create your models here.
 
 class Course(models.Model):
     name = models.CharField(max_length=200, verbose_name="ชื่อคอร์ส")
@@ -9,11 +8,37 @@ class Course(models.Model):
     description = models.TextField(blank=True, verbose_name="รายละเอียด")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
     class Meta:
         verbose_name = "คอร์ส"
         verbose_name_plural = "คอร์ส"
         ordering = ['-created_at']
-    
+    def __str__(self): return self.name
+
+class Lesson(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lessons', verbose_name="คอร์ส")
+    title = models.CharField(max_length=200, verbose_name="ชื่อบทเรียน")
+    description = models.TextField(blank=True, verbose_name="รายละเอียดบทเรียน")
+    order = models.PositiveIntegerField(default=0, verbose_name="ลำดับ")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    class Meta:
+        verbose_name = "บทเรียน"
+        verbose_name_plural = "บทเรียน"
+        ordering = ['course', 'order']
+    def __str__(self): return f"{self.course.name} - {self.title}"
+
+class LessonLink(models.Model):
+    KIND_CHOICES = [
+        ("youtube", "YouTube"),
+        ("external", "External URL"),
+        ("file", "File"), 
+    ]
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='links', verbose_name="บทเรียน")
+    title  = models.CharField(max_length=200, verbose_name="ชื่อเนื้อหา/ลิงก์")
+    kind   = models.CharField(max_length=16, choices=KIND_CHOICES, default="external")
+    url    = models.URLField(blank=True, verbose_name="ลิงก์")  
+    file   = models.FileField(upload_to="lesson_assets/", blank=True, null=True, verbose_name="ไฟล์") 
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
-        return self.name
+        return f"{self.lesson.title} - {self.title}"

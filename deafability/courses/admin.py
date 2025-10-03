@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Course, Lesson, LessonLink
+from .models import Course, Lesson, LessonLink,Job
 
 # Register your models here.
 class LessonInline(admin.TabularInline):
@@ -33,6 +33,15 @@ class LessonLinkAdmin(admin.ModelAdmin):
     actions = ['delete_selected']  
 
 
+@admin.register(Job)
+class JobAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "position_type", "courses_count", "created_at")
+    list_filter  = ("position_type", "created_at")  # ✅ filter ตามตำแหน่งงานที่พิมพ์
+    search_fields = ("title", "description", "position_type", "courses__name")
+    autocomplete_fields = ["courses"]  # พิมพ์หาคอร์สได้
 
+    def courses_count(self, obj):
+        return obj.courses.count()
+    courses_count.short_description = "จำนวนคอร์ส"
 
 

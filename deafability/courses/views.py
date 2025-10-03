@@ -1,12 +1,14 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404, redirect
-from .models import Course, Lesson, LessonLink, LessonProgress
-from .serializers import CourseSerializer, LessonSerializer, CourseProgressSerializer
+from .models import Course, Lesson, LessonLink, LessonProgress,Job
+from .serializers import CourseSerializer, LessonSerializer, CourseProgressSerializer,JobSerializer
 from django.utils import timezone
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.db.models import Q
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 
 
@@ -95,3 +97,35 @@ def course_progress(request, course_id):
     data = {'course_id': course.id, 'total_lessons': total, 'completed_lessons': completed, 'percent': round(percent, 2)}
     ser = CourseProgressSerializer(data)
     return Response(data)
+
+
+
+
+
+class JobListAPIView(ListAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = JobSerializer
+
+    def get_queryset(self):
+        qs = Job.objects.select_related().prefetch_related("courses").order_by("-created_at")
+        q = self.request.query_params.get("q")
+        pos = self.request.query_params.get("position_type")
+
+        if q:
+            qs = qs.filter(
+                Q(title__icontains=q) |
+                Q(description__icontains=q) |
+                Q(courses__name__icontains=q)
+            ).distinct()
+
+        if pos:
+            # เป็น free text → ใช้ icontains จะยืดหยุ่นกว่า exact
+            qs = qs.filter(position_type__icontains=pos)
+
+        return qs
+
+class JobDetailAPIView(RetrieveAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = JobSerializer
+    queryset = Job.objects.prefetch_related("courses").all()
+    lookup_url_kwarg = "job_id"   

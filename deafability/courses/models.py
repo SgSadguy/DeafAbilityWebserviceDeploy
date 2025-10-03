@@ -64,3 +64,24 @@ class LessonLink(models.Model):
 
     def __str__(self):
         return f"{self.lesson.title} - {self.title}"
+
+
+
+class Job(models.Model):
+    title = models.CharField(max_length=200, verbose_name="ชื่องาน")
+    description = models.TextField(blank=True, verbose_name="รายละเอียดงาน")
+    position_type = models.CharField(max_length=200, verbose_name="ตำแหน่งงาน")  
+    courses = models.ManyToManyField(
+        "courses.Course", related_name="jobs", blank=True, verbose_name="คอร์สที่เกี่ยวข้อง"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "งาน"
+        verbose_name_plural = "งาน"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.title

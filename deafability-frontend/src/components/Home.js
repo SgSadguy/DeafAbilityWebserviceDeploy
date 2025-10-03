@@ -161,6 +161,32 @@ const Home = () => {
         </div>
       </div>
       
+
+
+    <div className="container">
+      <div className="header">
+        <h1>🎓 DeafAbility</h1>
+        <p>ระบบจัดการคอร์สสำหรับผู้พิการทางการได้ยิน</p>
+        
+        {/* ปุ่มใหม่ */}
+        <button 
+          onClick={() => navigate('/jobs')}
+          style={{
+            marginTop: '10px',
+            padding: '10px 20px',
+            backgroundColor: '#28a745',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer'
+          }}
+        >
+          💼 ไปยัง Job Page
+        </button>
+      </div>
+    </div>
+
+
       {filteredCourses.length === 0 ? (
         <div className="no-courses">
           <p>📭 ไม่พบคอร์สที่ตรงกับเงื่อนไข</p>

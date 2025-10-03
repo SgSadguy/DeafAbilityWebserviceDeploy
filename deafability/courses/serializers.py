@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Lesson, LessonLink, LessonProgress
+from .models import Course, Lesson, LessonLink, LessonProgress , Job
 from urllib.parse import urlparse, parse_qs
 
 def youtube_embed(u: str):
@@ -85,3 +85,24 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 
+
+
+class CourseMiniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ["id", "name", "level", "category"]
+
+class JobSerializer(serializers.ModelSerializer):
+    courses = CourseMiniSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Job
+        fields = [
+            "id",
+            "title",
+            "description",
+            "position_type",
+            "courses",        # ← รายการคอร์สแบบย่อ
+            "created_at",
+            "updated_at",
+        ]

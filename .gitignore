@@ -1,0 +1,17 @@
+deafability/courses/__pycache__/__init__.cpython-313.pyc
+deafability/courses/__pycache__/admin.cpython-313.pyc
+deafability/courses/__pycache__/apps.cpython-313.pyc
+deafability/courses/__pycache__/models.cpython-313.pyc
+deafability/courses/__pycache__/serializers.cpython-313.pyc
+deafability/courses/__pycache__/views.cpython-313.pyc
+deafability/courses/migrations/__pycache__/__init__.cpython-313.pyc
+deafability/courses/migrations/__pycache__/0001_initial.cpython-313.pyc
+deafability/courses/migrations/__pycache__/0002_lesson.cpython-313.pyc
+deafability/courses/migrations/__pycache__/0003_lessonlink.cpython-313.pyc
+deafability/courses/migrations/__pycache__/0004_alter_lesson_options_and_more.cpython-313.pyc
+deafability/courses/migrations/__pycache__/0005_lessonprogress.cpython-313.pyc
+deafability/courses/migrations/__pycache__/0006_job.cpython-313.pyc
+deafability/deafability/__pycache__/__init__.cpython-313.pyc
+deafability/deafability/__pycache__/settings.cpython-313.pyc
+deafability/deafability/__pycache__/urls.cpython-313.pyc
+deafability/deafability/__pycache__/wsgi.cpython-313.pyc

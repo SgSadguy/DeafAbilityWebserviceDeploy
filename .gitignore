@@ -16,3 +16,8 @@ deafability/deafability/__pycache__/settings.cpython-313.pyc
 deafability/deafability/__pycache__/urls.cpython-313.pyc
 deafability/deafability/__pycache__/wsgi.cpython-313.pyc
 deafability/deafability/__pycache__/settings.cpython-313.pyc
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

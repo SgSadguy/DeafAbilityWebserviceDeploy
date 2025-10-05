@@ -53,17 +53,25 @@ class LessonLink(models.Model):
     KIND_CHOICES = [
         ("youtube", "YouTube"),
         ("external", "External URL"),
-        ("file", "File"), 
+        ("file", "File"),
     ]
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='links', verbose_name="บทเรียน")
-    title  = models.CharField(max_length=200, verbose_name="ชื่อเนื้อหา/ลิงก์")
-    kind   = models.CharField(max_length=16, choices=KIND_CHOICES, default="external")
-    url    = models.URLField(blank=True, verbose_name="ลิงก์")  
-    file   = models.FileField(upload_to="lesson_assets/", blank=True, null=True, verbose_name="ไฟล์") 
+    ROLE_CHOICES = [
+        ("main", "Main Video"),
+        ("sign", "Sign Language Video"),
+    ]
+
+    lesson = models.ForeignKey(
+        "Lesson", on_delete=models.CASCADE, related_name="links", verbose_name="บทเรียน"
+    )
+    title = models.CharField(max_length=200, verbose_name="ชื่อเนื้อหา/ลิงก์")
+    kind = models.CharField(max_length=16, choices=KIND_CHOICES, default="external")
+    role = models.CharField(max_length=16, choices=ROLE_CHOICES, default="main")
+    url = models.URLField(blank=True, verbose_name="ลิงก์")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.lesson.title} - {self.title}"
+        return f"{self.lesson.title} - {self.title} ({self.get_role_display()})"
+
 
 
 

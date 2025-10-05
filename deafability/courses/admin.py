@@ -18,19 +18,23 @@ class CourseAdmin(admin.ModelAdmin):
     ordering = ['-created_at']
 
 
+class LessonLinkInline(admin.TabularInline):
+    model = LessonLink
+    extra = 2
+    fields = ('title', 'kind', 'role', 'url')
+    ordering = ('id',)
+
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "course", "order", "created_at")
+    inlines = [LessonLinkInline]
     list_filter = ("course",)
     search_fields = ("title", "course__name")
     ordering = ("course", "order", "id")
     actions = ['delete_selected']  
-@admin.register(LessonLink)
-class LessonLinkAdmin(admin.ModelAdmin):
-    list_display = ("id", "lesson", "title", "kind", "url", "created_at")
-    list_filter = ("kind", "lesson__course")
-    search_fields = ("title", "url")
-    actions = ['delete_selected']  
+
+
+
 
 
 @admin.register(Job)

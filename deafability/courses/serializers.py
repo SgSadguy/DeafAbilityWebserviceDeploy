@@ -24,7 +24,7 @@ class LessonLinkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LessonLink
-        fields = ['id', 'title', 'kind', 'href', 'embed_url', 'created_at']
+        fields = ['id', 'title', 'kind','role' ,'href', 'embed_url', 'created_at']
 
     def get_href(self, obj):
         request = self.context.get("request")

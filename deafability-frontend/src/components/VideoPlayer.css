@@ -1,0 +1,40 @@
+/* src/VideoPlayer.css */
+.player-container {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  background: #000;
+}
+
+.main-player {
+  width: 100%;
+  aspect-ratio: 16/9;
+}
+
+.sign-player {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 240px;
+  aspect-ratio: 4/3;
+  background: #000;
+  border: 2px solid white;
+  border-radius: 8px;
+  overflow: hidden;
+  resize: both;
+  cursor: move;
+  min-width: 160px;
+  min-height: 120px;
+}
+
+/* ให้ iframe fill เต็ม */
+.sign-player iframe, .main-player iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.back-btn {
+  margin-top: 12px;
+}

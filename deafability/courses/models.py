@@ -7,6 +7,7 @@ class Course(models.Model):
     level = models.CharField(max_length=100, verbose_name="ระดับ")
     category = models.CharField(max_length=100, verbose_name="สายงาน")
     description = models.TextField(blank=True, verbose_name="รายละเอียด")
+    video_url = models.URLField(blank=True, verbose_name="ลิงก์วิดีโอ")  # New: single video URL
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     class Meta:

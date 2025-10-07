@@ -1,0 +1,177 @@
+:root {
+--primary-color: #1a6537;     
+--primary-hover: #1a6537;
+--background-color: #f9fafb;    /* Very light gray */
+--card-bg: #ffffff;
+--text-color: #111827;          /* Almost black for clarity */
+--muted-text: #6b7280;          /* Muted gray */
+--border-radius: 1rem;
+--transition: 0.25s ease;
+}
+
+/* General layout */
+body, .courses-container {
+margin: 0;
+padding: 0;
+font-family: 'Noto Sans Thai', 'Poppins', sans-serif;
+background-color: var(--background-color);
+color: var(--text-color);
+}
+
+/* Header */
+.courses-header {
+text-align: center;
+padding: 2rem 1rem 1rem;
+background-color: var(--card-bg);
+box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+.courses-header h1 {
+font-size: 1.6rem;
+font-weight: 600;
+color: var(--primary-color);
+margin-bottom: 0.25rem;
+}
+
+.courses-header p {
+font-size: 0.95rem;
+color: var(--muted-text);
+}
+
+
+/* Filter Section */
+.filter-section {
+background-color: var(--card-bg);
+margin: 1rem;
+padding: 1rem;
+border-radius: var(--border-radius);
+box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.filter-row {
+display: flex;
+flex-direction: column;
+gap: 0.75rem;
+margin-bottom: 1rem;
+}
+
+.search-input, .filter-select {
+padding: 0.75rem 1rem;
+border: 1px solid #d1d5db;
+border-radius: var(--border-radius);
+font-size: 1rem;
+background-color: #f9fafb;
+color: var(--text-color);
+transition: var(--transition);
+}
+
+.search-input:focus, .filter-select:focus {
+outline: none;
+border-color: var(--primary-color);
+background-color: #eef2ff;
+}
+
+.filter-info {
+text-align: right;
+font-size: 0.9rem;
+color: var(--muted-text);
+}
+
+/* Course grid */
+.course-grid {
+display: grid;
+grid-template-columns: 1fr;
+gap: 1rem;
+margin: 1rem;
+}
+
+.course-card {
+background-color: var(--card-bg);
+border-radius: var(--border-radius);
+padding: 1rem 1.25rem;
+box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+cursor: pointer;
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.course-card:hover {
+transform: scale(1.02);
+box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+.course-title {
+font-size: 1.2rem;
+font-weight: 600;
+color: var(--primary-color);
+margin-bottom: 0.5rem;
+}
+
+.course-info {
+font-size: 0.95rem;
+margin-bottom: 0.25rem;
+}
+
+.course-description {
+font-size: 0.9rem;
+color: var(--muted-text);
+margin-top: 0.5rem;
+line-height: 1.4;
+}
+
+/* Empty / Error / Loading states */
+.no-courses, .loading, .error {
+text-align: center;
+margin-top: 2rem;
+color: var(--muted-text);
+font-size: 1.1rem;
+}
+
+.retry-button {
+margin-top: 1rem;
+padding: 0.75rem 1.5rem;
+background-color: var(--primary-color);
+color: #fff;
+border: none;
+border-radius: var(--border-radius);
+font-size: 1rem;
+cursor: pointer;
+transition: var(--transition);
+}
+
+.retry-button:hover {
+background-color: var(--primary-hover);
+}
+
+/* Larger screens */
+@media (min-width: 640px) {
+.filter-row {
+flex-direction: row;
+justify-content: space-between;
+}
+
+.filter-select {
+width: 48%;
+}
+
+.course-grid {
+grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+}
+
+/* Accessibility improvements */
+:focus-visible {
+outline: 3px solid var(--primary-color);
+outline-offset: 2px;
+}
+
+button, select, input {
+font-family: inherit;
+}
+::selection {
+background-color: var(--primary-color);
+color: white;
+}
+::placeholder {
+color: #9ca3af;
+}

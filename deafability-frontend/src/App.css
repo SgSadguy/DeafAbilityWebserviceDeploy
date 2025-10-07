@@ -106,20 +106,20 @@ body {
 }
 
 .page-title {
-  text-align: center;
-  color: #333;
+  text-align: left;
+  color: #1a6537;
   margin-bottom: 30px;
   font-size: 2rem;
 }
 
-/* Filter Section */
+/* Filter Section
 .filter-section {
   background: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   margin-bottom: 30px;
-}
+} */
 
 .filter-row {
   display: flex;

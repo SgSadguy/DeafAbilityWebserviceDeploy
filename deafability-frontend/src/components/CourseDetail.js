@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from './utils/api';
-import './CourseDetail.css';
+import './Courses.css';
+import DropdownNav from './DropdownNav';
+import logo from '../assets/logo_nobg.png';
+import VideoPlayer from './VideoPlayer';
+
 
 const CourseDetail = () => {
   const navigate = useNavigate();
@@ -66,8 +70,6 @@ const CourseDetail = () => {
   const handleLessonClick = async (lessonId) => {
     try {
       const response = await axios.get(`/api/courses/${id}/lessons/${lessonId}/`);
-      console.log('Lesson response:', response.data);
-      alert(`Hello! This is lesson ${lessonId}`);
     } catch (err) {
       console.error('Error fetching lesson:', err);
       alert('ไม่สามารถโหลดบทเรียนได้');
@@ -76,7 +78,7 @@ const CourseDetail = () => {
   };
 
   const handleBackClick = () => {
-    navigate('/');
+    navigate('/courses');
   };
 
   if (loading) {
@@ -95,7 +97,7 @@ const CourseDetail = () => {
         <div className="error">
           <p>❌ {error}</p>
           <button onClick={handleBackClick} className="back-button">
-            ← กลับไปหน้าแรก
+            ← กลับหน้ารวมคอร์ส
           </button>
         </div>
       </div>
@@ -108,7 +110,7 @@ const CourseDetail = () => {
         <div className="no-courses">
           <p>📭 ไม่พบคอร์สที่ต้องการ</p>
           <button onClick={handleBackClick} className="back-button">
-            ← กลับไปหน้าแรก
+            ← กลับหน้ารวมคอร์ส
           </button>
         </div>
       </div>
@@ -116,38 +118,23 @@ const CourseDetail = () => {
   }
 
   return (
-    <div className="container">
-      <div className="header">
-        <h1>🎓 DeafAbility</h1>
-        <p>ระบบจัดการคอร์สสำหรับผู้พิการทางการได้ยิน</p>
+    <div className="home-container">
+      <header className="header" role="banner"> 
+        <div className="brand"> 
+            <img src={logo} alt="DeafAbility Logo" className="logo" />
       </div>
+      <DropdownNav />
+      </header>
       
       <div className="course-detail">
-        <button onClick={handleBackClick} className="back-button">
-          ← กลับไปหน้าแรก
-        </button>
         
-
-        <button onClick={async () => {
-          await axios.post(`/api/courses/${id}/reset_progress/`);
-          await fetchProgress();
-        }} >
-          🔄 เริ่มคอร์สนี้ใหม่
-        </button>
         
         <div className="course-detail-card">
           <h2 className="course-detail-title">{course.name}</h2>
 
+          <VideoPlayer course={course} />
+
           {/* Progress bar */}
-         <div className="progress-wrapper" style={{ margin: '12px 0' }}>
-           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}>
-             <span>ความคืบหน้า</span>
-             <span>{progress.completed_lessons}/{progress.total_lessons} • {progress.percent}%</span>
-           </div>
-           <div style={{ height: 10, background: '#eee', borderRadius: 6, overflow: 'hidden', marginTop: 6 }}>
-             <div style={{ width: `${progress.percent || 0}%`, height: '100%', background: '#4caf50', transition: 'width 0.3s' }} />
-           </div>
-         </div>
 
           <div className="course-detail-info">
             <div className="info-item">
@@ -168,7 +155,7 @@ const CourseDetail = () => {
           )}
 
           {/* Lesson List */}
-          {course.lessons && course.lessons.length > 0 && (
+          {/* {course.lessons && course.lessons.length > 0 && (
             <div className="lessons-section">
               <h3>📚 รายการบทเรียน</h3>
               <div className="lessons-list">
@@ -194,10 +181,10 @@ const CourseDetail = () => {
                 ))}
               </div>
             </div>
-          )}
+          )} */}
 
           <div className="course-actions">
-            {!enrolled ? (
+            {/* {!enrolled ? (
               <button 
                 onClick={handleEnroll}
                 className="enroll-button"
@@ -208,9 +195,9 @@ const CourseDetail = () => {
               <div className="enrolled-message">
                 ✅ สมัครเรียนแล้ว
               </div>
-            )}
+            )} */}
             <button onClick={handleBackClick} className="back-button">
-              ← กลับไปหน้าแรก
+              ← กลับหน้ารวมคอร์ส
             </button>
           </div>
         </div>

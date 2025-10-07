@@ -11,7 +11,7 @@ class LessonInline(admin.TabularInline):
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ['name', 'level', 'category', 'created_at']
+    list_display = ('name', 'level', 'category', 'video_url', 'created_at')
     list_filter = ['level', 'category', 'created_at']
     search_fields = ['name', 'level', 'category']
     inlines = [LessonInline]

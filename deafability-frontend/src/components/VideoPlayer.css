@@ -1,40 +1,96 @@
-/* src/VideoPlayer.css */
+/* src/VideoPlayer.css - Mobile First */
 .player-container {
   position: relative;
   width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
-  background: #000;
+  margin: 16px auto;
+  background: #0f3d1f;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+  transition: box-shadow 0.3s ease;
+}
+
+.player-container:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
 }
 
 .main-player {
   width: 100%;
   aspect-ratio: 16/9;
+  background: #000;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
 }
 
 .sign-player {
   position: absolute;
-  bottom: 16px;
-  right: 16px;
-  width: 240px;
+  bottom: 12px;
+  right: 12px;
+  width: 180px;
   aspect-ratio: 4/3;
   background: #000;
-  border: 2px solid white;
-  border-radius: 8px;
+  border: 2px solid #fff;
+  border-radius: 12px;
   overflow: hidden;
-  resize: both;
   cursor: move;
-  min-width: 160px;
-  min-height: 120px;
+  min-width: 120px;
+  min-height: 90px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* ให้ iframe fill เต็ม */
-.sign-player iframe, .main-player iframe {
+.sign-player:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+.sign-player iframe,
+.main-player iframe {
   width: 100%;
   height: 100%;
   border: none;
 }
 
 .back-btn {
+  display: inline-block;
   margin-top: 12px;
+  padding: 10px 16px;
+  background: #155724;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #0f3d1f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Tablet and above */
+@media (min-width: 600px) {
+  .player-container {
+    max-width: 640px;
+  }
+
+  .sign-player {
+    width: 220px;
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+/* Desktop and above */
+@media (min-width: 960px) {
+  .player-container {
+    max-width: 960px;
+  }
+
+  .sign-player {
+    width: 240px;
+    bottom: 20px;
+    right: 20px;
+  }
 }

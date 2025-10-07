@@ -1,0 +1,238 @@
+/* ===============================
+JobsPage Styles — Mobile First
+Designed for deaf-friendly UX
+=============================== */
+
+/* Global container */
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+.job-container {
+width: 100%;
+max-width: 1200px;
+margin: 0 auto;
+padding: 16px;
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+color: #1c1c1c;
+background-color: #1a6537;     
+}
+
+/* Header */
+.job-header {
+  margin-top: 0;
+  padding-top: 0;  
+  width: 100%;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgb(211, 223, 211);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* Filters */
+.filter-section {
+background-color: white;
+border-radius: 12px;
+padding: 12px;
+}
+.filter-row {
+display: flex;
+flex-direction: column;
+gap: 10px;
+margin-bottom: 10px;
+}
+.search-input,
+.filter-select {
+width: 100%;
+padding: 10px 12px;
+border: 1px solid #ccc;
+border-radius: 8px;
+font-size: 1rem;
+background-color: #fff;
+transition: all 0.2s ease;
+}
+.search-input:focus,
+.filter-select:focus {
+outline: none;
+border-color: #006400;
+box-shadow: 0 0 0 3px rgba(0, 128, 0, 0.2);
+}
+.filter-info {
+text-align: right;
+font-size: 0.9rem;
+color: #333;
+}
+
+/* Loading / Error / Empty states */
+.loading,
+.error,
+.no-courses {
+text-align: center;
+padding: 16px;
+color: #333;
+}
+.error {
+color: #b00020;
+}
+
+/* Job list and detail grid */
+@media (min-width: 768px) {
+.container > div:last-child {
+display: grid;
+grid-template-columns: 1.2fr 1.8fr;
+gap: 16px;
+}
+}
+
+/* Job list */
+.course-grid {
+display: grid;
+grid-template-columns: 1fr;
+gap: 12px;
+}
+.course-card {
+background-color: #fff;
+border-radius: 10px;
+padding: 14px;
+box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+transition: transform 0.15s ease, box-shadow 0.15s ease, border 0.15s ease;
+}
+.course-card:hover,
+.course-card:focus {
+transform: scale(1.02);
+box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+border: 2px solid #006400;
+}
+.course-title {
+font-size: 1.1rem;
+font-weight: 600;
+margin-bottom: 6px;
+color: #004d00;
+}
+.course-info {
+font-size: 0.9rem;
+color: #333;
+margin-bottom: 8px;
+}
+.course-description {
+font-size: 0.9rem;
+color: #555;
+line-height: 1.4;
+}
+
+/* Job detail card */
+.course-detail-card {
+background-color: #fff;
+border-radius: 12px;
+padding: 20px;
+box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.course-detail-title {
+font-size: 1.4rem;
+font-weight: 700;
+color: #004d00;
+margin-bottom: 0.5rem;
+}
+.course-detail-info {
+display: flex;
+flex-direction: column;
+gap: 6px;
+font-size: 0.95rem;
+}
+.info-item {
+display: flex;
+justify-content: space-between;
+background: #f1f8f4;
+border-radius: 8px;
+padding: 6px 10px;
+}
+.info-label {
+font-weight: 600;
+color: #333;
+}
+.info-value {
+color: #444;
+}
+
+/* Lessons section */
+.lessons-section h3 {
+font-size: 1.1rem;
+margin-bottom: 8px;
+color: #006400;
+}
+.lessons-list {
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+.lesson-item {
+display: flex;
+align-items: center;
+justify-content: space-between;
+background-color: #f6fff9;
+padding: 10px 14px;
+border-radius: 10px;
+transition: all 0.2s ease;
+}
+.lesson-item:hover {
+background-color: #e1f7e8;
+transform: scale(1.01);
+}
+.lesson-number {
+background-color: #006400;
+color: white;
+border-radius: 50%;
+width: 28px;
+height: 28px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 600;
+}
+.lesson-content {
+flex: 1;
+margin-left: 10px;
+}
+.lesson-title {
+font-size: 1rem;
+font-weight: 600;
+color: #004d00;
+margin-bottom: 2px;
+}
+.lesson-description {
+font-size: 0.9rem;
+color: #555;
+}
+.lesson-arrow {
+font-size: 1.2rem;
+color: #006400;
+font-weight: 700;
+}
+
+/* Responsive — Small devices */
+@media (max-width: 767px) {
+.course-detail-card {
+margin-top: 20px;
+}
+.info-item {
+flex-direction: column;
+align-items: flex-start;
+}
+.filter-info {
+text-align: left;
+}
+}
+
+/* Animations for accessibility */
+@media (prefers-reduced-motion: no-preference) {
+.course-card,
+.lesson-item {
+transition: all 0.25s ease;
+}
+}

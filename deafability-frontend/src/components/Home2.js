@@ -11,7 +11,7 @@ const navigate = useNavigate();
 
 const goToCourseDetail = () => {
 // navigates to course detail (example id = 1). Change id as needed.
-navigate('/course/1');
+navigate('/courses');
 };
 
 const goToJobs = () => {
@@ -19,14 +19,13 @@ navigate('/jobs');
 };
 
 return ( <div className="home-container">
-{/* Header */} <header className="header" role="banner"> 
-                <div className="brand"> 
-                    <img src={logo} alt="DeafAbility Logo" className="logo" />
-                </div>
+  <header className="header" role="banner"> 
+      <div className="brand"> 
+          <img src={logo} alt="DeafAbility Logo" className="logo" />
+      </div>
 
-    {/* Dropdown Navbar */}
 
-    <DropdownNav />
+      <DropdownNav />
   </header>
 
   {/* Main content */}

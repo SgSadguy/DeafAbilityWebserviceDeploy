@@ -32,7 +32,7 @@ urlpatterns = [
     path('api/courses/<int:course_id>/lessons/<int:lesson_id>/', lesson_detail, name='lesson-detail'),
     path('api/courses/<int:course_id>/progress/', course_progress, name='course_progress'),
     path('api/courses/<int:course_id>/lessons/<int:lesson_id>/complete/', lesson_complete, name='lesson_complete'),
-
+    
     path("api/jobs/", JobListAPIView.as_view(), name="job_list"),
     path("api/jobs/<int:job_id>/", JobDetailAPIView.as_view(), name="job_detail"),
     

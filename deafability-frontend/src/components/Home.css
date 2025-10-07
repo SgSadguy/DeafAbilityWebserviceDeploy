@@ -85,7 +85,7 @@ opacity: 0.95;
   top: 100%; /* directly below the header/nav */
   left: 0;
   width: 100%;
-  background-color: rgb(211, 223, 211);
+  background-color: white;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   border-bottom: 1px solid #e5e7eb;
   display: flex;
@@ -100,7 +100,7 @@ opacity: 0.95;
   text-align: center;
   padding: 12px 20px;
   font-size: 1rem;
-  color: black;
+  color:#1a6537;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -186,6 +186,21 @@ background: #eef2ff;
 }
 } */
 
+.header {
+  margin-top: 0;
+  padding-top: 0;  
+  width: 100%;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgb(211, 223, 211);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
 /* Main */
 .main {
 flex: 1;
@@ -201,7 +216,7 @@ text-align: center;
 font-size: 1.125rem;
 margin: 0 0 16px 0;
 font-weight: 700;
-color:  #ffffffd9;
+color: white;
 }
 
 /* Buttons area */
@@ -234,7 +249,7 @@ flex-direction: column;
 align-items: center;
 justify-content: center;
 gap: 10px;
-background: #ffffffd9;
+background: white;
 }
 
 .big-btn:active {

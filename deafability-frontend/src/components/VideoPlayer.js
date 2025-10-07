@@ -2,110 +2,139 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from './utils/api';
-import './VideoPlayer.css'; // เราจะสร้าง css สำหรับ resize/drag
+import './VideoPlayer.css';
 
-export default function VideoPlayer() {
-  const { courseId, lessonId } = useParams();
+export default function VideoPlayer({ course: initialCourse }) {
+  const { courseId } = useParams();
   const navigate = useNavigate();
 
-  const [lesson, setLesson] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [course, setCourse] = useState(initialCourse || null);
+  const [loading, setLoading] = useState(!initialCourse);
   const [error, setError] = useState(null);
 
-  const mainPlayer = useRef(null);
-  const signPlayer = useRef(null);
+  const playerRef = useRef(null);
 
+  // Fetch course only if no prop provided
   useEffect(() => {
-    const fetchLesson = async () => {
+    if (initialCourse) return;
+    if (!courseId) return;
+
+    const fetchCourse = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`/api/courses/${courseId}/lessons/${lessonId}/`);
-        setLesson(res.data);
+        const res = await axios.get(`/api/courses/${courseId}/`);
+        setCourse(res.data);
+        setError(null);
       } catch (err) {
-        setError('โหลดบทเรียนไม่สำเร็จ');
+        console.error('Error fetching course:', err);
+        setError('โหลดคอร์สไม่สำเร็จ');
       } finally {
         setLoading(false);
       }
     };
-    fetchLesson();
-  }, [courseId, lessonId]);
 
-  // เตรียม script ของ YouTube API
+    fetchCourse();
+  }, [courseId, initialCourse]);
+
+  // Load YouTube API script once
   useEffect(() => {
+    if (!course?.video_url) return;
+
+    const isYouTube =
+      course.video_url.includes('youtube.com') || course.video_url.includes('youtu.be');
+    if (!isYouTube) return;
+
     if (!window.YT) {
       const tag = document.createElement('script');
       tag.src = 'https://www.youtube.com/iframe_api';
+      tag.async = true;
       document.body.appendChild(tag);
     }
-  }, []);
+  }, [course]);
 
+  // Initialize YouTube player
   useEffect(() => {
-    if (!lesson || !window.YT || !lesson.links) return;
+    if (!course?.video_url) return;
 
-    const mainLink = lesson.links.find(l => l.role === 'main');
-    const signLink = lesson.links.find(l => l.role === 'sign');
+    const isYouTube =
+      course.video_url.includes('youtube.com') || course.video_url.includes('youtu.be');
 
-    if (!mainLink?.embed_url) return;
+    if (isYouTube) {
+      const videoId = extractYouTubeId(course.video_url);
+      if (!videoId) return;
 
-    const setupPlayers = () => {
-      if (mainPlayer.current) mainPlayer.current.destroy?.();
-      if (signPlayer.current) signPlayer.current.destroy?.();
+      const initPlayer = () => {
+        if (playerRef.current) playerRef.current.destroy?.();
 
-      mainPlayer.current = new window.YT.Player('main-video', {
-        videoId: extractId(mainLink.embed_url),
-        events: {
-          onStateChange: (e) => {
-            if (!signPlayer.current) return;
-            if (e.data === window.YT.PlayerState.PLAYING) signPlayer.current.playVideo();
-            if (e.data === window.YT.PlayerState.PAUSED) signPlayer.current.pauseVideo();
-          }
-        }
-      });
-
-      if (signLink?.embed_url) {
-        signPlayer.current = new window.YT.Player('sign-video', {
-          videoId: extractId(signLink.embed_url),
+        playerRef.current = new window.YT.Player('main-video', {
+          videoId,
+          playerVars: { rel: 0, modestbranding: 1 },
+          events: {
+            onReady: (event) => {
+              try {
+                event.target.mute();
+                event.target.playVideo();
+              } catch {}
+            },
+          },
         });
-      }
-    };
+      };
 
-    window.onYouTubeIframeAPIReady = setupPlayers;
-    if (window.YT && window.YT.Player) setupPlayers();
+      const waitForYT = () => {
+        if (window.YT && window.YT.Player) initPlayer();
+        else setTimeout(waitForYT, 200);
+      };
 
-    return () => {
-      mainPlayer.current?.destroy?.();
-      signPlayer.current?.destroy?.();
-    };
-  }, [lesson]);
+      waitForYT();
 
-  const extractId = (embedUrl) => {
+      return () => playerRef.current?.destroy?.();
+    }
+  }, [course]);
+
+  // Extract YouTube ID
+  const extractYouTubeId = (url) => {
     try {
-      const u = new URL(embedUrl);
-      const parts = u.pathname.split('/');
-      const i = parts.findIndex(p => p === 'embed');
-      return i >= 0 ? parts[i + 1] : null;
+      const u = new URL(url);
+      if (u.hostname.includes('youtu.be')) return u.pathname.slice(1);
+      if (u.hostname.includes('youtube.com')) {
+        const params = new URLSearchParams(u.search);
+        return params.get('v') || u.pathname.split('/').pop();
+      }
+      return null;
     } catch {
       return null;
     }
   };
 
-  if (loading) return <p>กำลังโหลด...</p>;
+  if (loading) return <p>กำลังโหลดวิดีโอ...</p>;
   if (error) return <p>{error}</p>;
-  if (!lesson) return <p>ไม่พบข้อมูลบทเรียน</p>;
+  if (!course || !course.video_url) return <p>ไม่พบวิดีโอสำหรับคอร์สนี้</p>;
+
+  const isYouTube =
+    course.video_url.includes('youtube.com') || course.video_url.includes('youtu.be');
 
   return (
     <div className="player-container">
-      <h2>{lesson.title}</h2>
+
       <div className="main-player">
-        <div id="main-video"></div>
+        {isYouTube ? (
+          <div id="main-video"></div>
+        ) : (
+          <video
+            src={course.video_url}
+            controls
+            autoPlay
+            style={{ width: '100%', height: '100%' }}
+          />
+        )}
       </div>
 
-      {/* Sign video overlay */}
-      <div className="sign-player" id="sign-player">
-        <div id="sign-video"></div>
-      </div>
-
-      <button onClick={() => navigate(-1)} className="back-btn">← กลับ</button>
+      {/* Optional back button if needed */}
+      {!initialCourse && (
+        <button onClick={() => navigate(-1)} className="back-btn">
+          ← กลับ
+        </button>
+      )}
     </div>
   );
 }

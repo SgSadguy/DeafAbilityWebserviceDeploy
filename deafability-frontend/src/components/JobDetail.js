@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from './utils/api';
 import './CourseDetail.css'; // reuse สไตล์เดิม
+import logo from '../assets/logo_nobg.png';
+import DropdownNav from './DropdownNav';
+
 
 const JobDetail = () => {
   const navigate = useNavigate();
@@ -74,16 +77,18 @@ const JobDetail = () => {
   }
 
   return (
-    <div className="container">
-      <div className="header">
-        <h1>💼 DeafAbility Jobs</h1>
-        <p>รายละเอียดงานและคอร์สที่เกี่ยวข้อง</p>
-      </div>
+    <div className="home-container">
+      <header className="job-header" role="banner"> 
+                <div className="brand"> 
+                    <img src={logo} alt="DeafAbility Logo" className="logo" />
+                </div>
+
+    {/* Dropdown Navbar */}
+
+    <DropdownNav />
+  </header>
 
       <div className="course-detail">
-        <button onClick={handleBackClick} className="back-button">
-          ← กลับไป Jobs
-        </button>
 
         <div className="course-detail-card">
           <h2 className="course-detail-title">{job.title}</h2>

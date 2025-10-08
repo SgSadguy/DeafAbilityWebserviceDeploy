@@ -13,15 +13,18 @@ const CourseDetail = () => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [progress, setProgress] = useState({
-    percent: 0,
-    completed_lessons: 0,
-    total_lessons: 0,
-  });
+  // const [progress, setProgress] = useState({
+  //   percent: 0,
+  //   completed_lessons: 0,
+  //   total_lessons: 0,
+  // });
   
   useEffect(() => {
-    fetchCourseDetail();
-    fetchProgress();
+    const fetchData = async () => {
+      await fetchCourseDetail();
+      // await fetchProgress();
+    };
+    fetchData();
   }, [id]);
 
   const fetchCourseDetail = async () => {
@@ -40,20 +43,20 @@ const CourseDetail = () => {
 
 
 
-  const fetchProgress = async () => {
-    try {
-      const res = await axios.get(`/api/courses/${id}/progress/`);
-      // ควรได้ { course_id, total_lessons, completed_lessons, percent }
-      setProgress({
-        percent: res.data?.percent ?? 0,
-        completed_lessons: res.data?.completed_lessons ?? 0,
-        total_lessons: res.data?.total_lessons ?? 0,
-      });
-    } catch (e) {
-      console.warn('Cannot fetch progress yet. Defaulting to 0.', e);
-      setProgress({ percent: 0, completed_lessons: 0, total_lessons: 0 });
-    }
-  };
+  // const fetchProgress = async () => {
+  //   try {
+  //     const res = await axios.get(`/api/courses/${id}/progress/`);
+  //     // ควรได้ { course_id, total_lessons, completed_lessons, percent }
+  //     setProgress({
+  //       percent: res.data?.percent ?? 0,
+  //       completed_lessons: res.data?.completed_lessons ?? 0,
+  //       total_lessons: res.data?.total_lessons ?? 0,
+  //     });
+  //   } catch (e) {
+  //     console.warn('Cannot fetch progress yet. Defaulting to 0.', e);
+  //     setProgress({ percent: 0, completed_lessons: 0, total_lessons: 0 });
+  //   }
+  // };
 
   // Removed unused functions
 

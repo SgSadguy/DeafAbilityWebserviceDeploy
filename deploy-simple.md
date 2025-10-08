@@ -20,13 +20,7 @@
    - **Environment**: `Python 3`
    - **Build Command**: 
      ```bash
-     pip install -r requirements.txt
-     cd deafability-frontend && npm install && CI=false npm run build
-     cd .. && cp deafability-frontend/build/index.html deafability/templates/ && cp -r deafability-frontend/build/static deafability/staticfiles/ && python deafability/manage.py collectstatic --noinput
-     ```
-   - **Pre-Deploy Command**: 
-     ```bash
-     cd deafability && python manage.py migrate && python create_production_data.py
+     pip install -r requirements.txt && cd deafability-frontend && npm install && CI=false npm run build && cd .. && cp deafability-frontend/build/index.html deafability/templates/ && cp -r deafability-frontend/build/static deafability/staticfiles/ && python deafability/manage.py collectstatic --noinput && cd deafability && python manage.py migrate && python create_production_data.py
      ```
    - **Start Command**: 
      ```bash

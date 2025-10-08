@@ -20,26 +20,8 @@ fetchCourses();
 }, []);
 
 useEffect(() => {
-filterCourses();
-}, [courses, searchTerm, selectedLevel, selectedCategory, filterCourses]);
-
-const fetchCourses = async () => {
-try {
-setLoading(true);
-const response = await axios.get('/api/courses-list/');
-setCourses(response.data);
-setError(null);
-} catch (err) {
-console.error('Error fetching courses:', err);
-setError('ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่');
-} finally {
-setLoading(false);
-}
-};
-
 const filterCourses = () => {
 let filtered = courses;
-
 
 if (searchTerm) {
   filtered = filtered.filter(course =>
@@ -56,9 +38,44 @@ if (selectedCategory) {
 }
 
 setFilteredCourses(filtered);
-
-
 };
+
+filterCourses();
+}, [courses, searchTerm, selectedLevel, selectedCategory]);
+
+const fetchCourses = async () => {
+try {
+setLoading(true);
+const response = await axios.get('/api/courses-list/');
+setCourses(response.data);
+setError(null);
+} catch (err) {
+console.error('Error fetching courses:', err);
+setError('ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่');
+} finally {
+setLoading(false);
+}
+};
+
+// const filterCourses = () => {
+// let filtered = courses;
+
+// if (searchTerm) {
+//   filtered = filtered.filter(course =>
+//     course.name.toLowerCase().includes(searchTerm.toLowerCase())
+//   );
+// }
+
+// if (selectedLevel) {
+//   filtered = filtered.filter(course => course.level === selectedLevel);
+// }
+
+// if (selectedCategory) {
+//   filtered = filtered.filter(course => course.category === selectedCategory);
+// }
+
+// setFilteredCourses(filtered);
+// };
 
 const getUniqueLevels = () => {
 return [...new Set(courses.map(course => course.level))];

@@ -15,22 +15,35 @@ const JobDetail = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchJobDetail();
-  }, [id, fetchJobDetail]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`/api/jobs/${id}/`);
+        setJob(res.data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching job detail:', err);
+        setError('ไม่สามารถโหลดข้อมูลงานได้');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [id]);
 
-  const fetchJobDetail = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get(`/api/jobs/${id}/`);
-      setJob(res.data);
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching job detail:', err);
-      setError('ไม่สามารถโหลดข้อมูลงานได้');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchJobDetail = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const res = await axios.get(`/api/jobs/${id}/`);
+  //     setJob(res.data);
+  //     setError(null);
+  //   } catch (err) {
+  //     console.error('Error fetching job detail:', err);
+  //     setError('ไม่สามารถโหลดข้อมูลงานได้');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleBackClick = () => {
     navigate('/jobs'); // กลับไปหน้ารายการงาน (JobsPage)

@@ -22,7 +22,7 @@
      ```bash
      pip install -r requirements.txt
      cd deafability-frontend && npm install && CI=false npm run build
-     cd .. && python deafability/manage.py collectstatic --noinput
+     cd .. && cp deafability-frontend/build/index.html deafability/templates/ && cp -r deafability-frontend/build/static deafability/staticfiles/ && python deafability/manage.py collectstatic --noinput
      ```
    - **Start Command**: 
      ```bash

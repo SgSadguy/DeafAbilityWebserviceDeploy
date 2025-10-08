@@ -16,6 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.static import serve
 from rest_framework.routers import DefaultRouter
 from courses.views import CourseViewSet, csrf_bootstrap ,course_list, course_detail, lesson_detail, enroll_course,lesson_complete, course_progress,reset_course_progress,JobListAPIView, JobDetailAPIView
 
@@ -37,4 +40,12 @@ urlpatterns = [
     path("api/jobs/<int:job_id>/", JobDetailAPIView.as_view(), name="job_detail"),
     
     path('api/courses/<int:course_id>/reset_progress/', reset_course_progress),
+    
+    # Serve React app - serve index.html for all non-API routes
+    path('', serve, {'document_root': settings.STATIC_ROOT, 'path': 'index.html'}),
+    path('<path:path>', serve, {'document_root': settings.STATIC_ROOT, 'path': 'index.html'}),
 ]
+
+# Serve static files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

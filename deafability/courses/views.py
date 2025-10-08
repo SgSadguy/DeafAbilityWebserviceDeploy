@@ -40,12 +40,14 @@ def reset_course_progress(request, course_id):
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    permission_classes = [AllowAny]
 
 
 # -------------------------------------------
 # Course list and detail (API)
 # -------------------------------------------
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def course_list(request):
     courses = Course.objects.all()
     serializer = CourseSerializer(courses, many=True)
@@ -53,6 +55,7 @@ def course_list(request):
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     serializer = CourseSerializer(course)

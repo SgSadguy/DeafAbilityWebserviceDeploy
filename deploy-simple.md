@@ -21,7 +21,7 @@
    - **Build Command**: 
      ```bash
      pip install -r requirements.txt
-     cd deafability-frontend && npm install && npm run build
+     cd deafability-frontend && npm install && CI=false npm run build
      cd .. && python deafability/manage.py collectstatic --noinput
      ```
    - **Start Command**: 

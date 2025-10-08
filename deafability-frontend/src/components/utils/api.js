@@ -1,10 +1,10 @@
 // src/components/utils/api.js
 import axios from 'axios';
 
-const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://127.0.0.1:8000/api",
-  withCredentials: true, // if you need CSRF/cookies
-});
+// const api = axios.create({
+//   baseURL: process.env.REACT_APP_API_URL || "http://127.0.0.1:8000/api",
+//   withCredentials: true, // if you need CSRF/cookies
+// });
 
 // ให้ส่ง/รับ cookie ไป-กลับ (จำเป็นต่อ CSRF ของ Django)
 axios.defaults.withCredentials = true;

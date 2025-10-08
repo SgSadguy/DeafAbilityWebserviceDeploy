@@ -21,7 +21,7 @@ fetchCourses();
 
 useEffect(() => {
 filterCourses();
-}, [courses, searchTerm, selectedLevel, selectedCategory]);
+}, [courses, searchTerm, selectedLevel, selectedCategory, filterCourses]);
 
 const fetchCourses = async () => {
 try {

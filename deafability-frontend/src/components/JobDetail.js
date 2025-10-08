@@ -16,7 +16,7 @@ const JobDetail = () => {
 
   useEffect(() => {
     fetchJobDetail();
-  }, [id]);
+  }, [id, fetchJobDetail]);
 
   const fetchJobDetail = async () => {
     try {

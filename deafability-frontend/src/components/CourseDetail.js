@@ -13,15 +13,15 @@ const CourseDetail = () => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [enrolled, setEnrolled] = useState(false);
   const [progress, setProgress] = useState({
     percent: 0,
     completed_lessons: 0,
     total_lessons: 0,
   });
+  
   useEffect(() => {
     fetchCourseDetail();
-     fetchProgress();
+    fetchProgress();
   }, [id]);
 
   const fetchCourseDetail = async () => {
@@ -55,27 +55,7 @@ const CourseDetail = () => {
     }
   };
 
-  const handleEnroll = async () => {
-    try {
-      const response = await axios.post(`/api/courses/${id}/enroll/`);
-      console.log('Enroll response:', response.data);
-      setEnrolled(true);
-      alert('สมัครเรียนสำเร็จ!');
-    } catch (err) {
-      console.error('Error enrolling:', err);
-      alert('ไม่สามารถสมัครเรียนได้');
-    }
-  };
-
-  const handleLessonClick = async (lessonId) => {
-    try {
-      const response = await axios.get(`/api/courses/${id}/lessons/${lessonId}/`);
-    } catch (err) {
-      console.error('Error fetching lesson:', err);
-      alert('ไม่สามารถโหลดบทเรียนได้');
-    }
-    navigate(`/videoplayer/${id}/${lessonId}`);
-  };
+  // Removed unused functions
 
   const handleBackClick = () => {
     navigate('/courses');

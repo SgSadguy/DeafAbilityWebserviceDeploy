@@ -24,9 +24,13 @@
      cd deafability-frontend && npm install && CI=false npm run build
      cd .. && cp deafability-frontend/build/index.html deafability/templates/ && cp -r deafability-frontend/build/static deafability/staticfiles/ && python deafability/manage.py collectstatic --noinput
      ```
+   - **Pre-Deploy Command**: 
+     ```bash
+     cd deafability && python manage.py migrate && python create_production_data.py
+     ```
    - **Start Command**: 
      ```bash
-     cd deafability && python manage.py migrate && gunicorn deafability.wsgi:application --bind 0.0.0.0:$PORT
+     cd deafability && gunicorn deafability.wsgi:application --bind 0.0.0.0:$PORT
      ```
 
 ### 3. Deploy Frontend (React)

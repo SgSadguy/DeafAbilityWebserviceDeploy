@@ -46,11 +46,15 @@ filterCourses();
 const fetchCourses = async () => {
 try {
 setLoading(true);
+console.log('🔄 Fetching courses...');
 const response = await axios.get('/courses/');
+console.log('📚 Courses response:', response.data);
 setCourses(response.data);
 setError(null);
 } catch (err) {
-console.error('Error fetching courses:', err);
+console.error('❌ Error fetching courses:', err);
+console.error('❌ Error details:', err.response?.data);
+console.error('❌ Error status:', err.response?.status);
 setError('ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่');
 } finally {
 setLoading(false);

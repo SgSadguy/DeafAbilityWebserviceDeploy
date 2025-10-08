@@ -38,7 +38,9 @@ export default function JobsPage() {
         if (q) params.q = q;
         if (pos) params.position_type = pos;
 
+        console.log('🔄 Fetching jobs...', params);
         const res = await axios.get('/jobs/', { params });
+        console.log('💼 Jobs response:', res.data);
         const items = Array.isArray(res.data) ? res.data : res.data?.results ?? [];
 
         setJobs(items);
@@ -50,7 +52,9 @@ export default function JobsPage() {
         if (pos) nextParams.position_type = pos;
         setSearchParams(nextParams, { replace: true });
       } catch (e) {
-        console.error(e);
+        console.error('❌ Error fetching jobs:', e);
+        console.error('❌ Error details:', e.response?.data);
+        console.error('❌ Error status:', e.response?.status);
         setError('ไม่สามารถโหลดรายการงานได้');
         setJobs([]);
       } finally {

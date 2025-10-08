@@ -19,6 +19,13 @@ from courses.models import Course, Lesson, Job
 def create_production_data():
     """Create production courses and jobs"""
     
+    # Check if data already exists
+    if Course.objects.count() > 0 and Job.objects.count() > 0:
+        print("✅ Data already exists, skipping creation")
+        print(f"📚 Total courses: {Course.objects.count()}")
+        print(f"💼 Total jobs: {Job.objects.count()}")
+        return
+    
     # Create courses
     courses_data = [
         {

@@ -38,7 +38,7 @@ export default function JobsPage() {
         if (q) params.q = q;
         if (pos) params.position_type = pos;
 
-        const res = await axios.get('/api/jobs/', { params });
+        const res = await axios.get('/jobs/', { params });
         const items = Array.isArray(res.data) ? res.data : res.data?.results ?? [];
 
         setJobs(items);

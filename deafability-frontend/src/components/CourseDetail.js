@@ -30,7 +30,7 @@ const CourseDetail = () => {
   const fetchCourseDetail = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`/api/courses/${id}/`);
+      const response = await axios.get(`/courses/${id}/`);
       setCourse(response.data);
       setError(null);
     } catch (err) {

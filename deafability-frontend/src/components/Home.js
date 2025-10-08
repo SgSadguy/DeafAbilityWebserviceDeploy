@@ -23,7 +23,7 @@ const Home = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/courses-list/');
+      const response = await axios.get('/courses/');
       setCourses(response.data);
       setError(null);
     } catch (err) {

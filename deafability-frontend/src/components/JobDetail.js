@@ -18,7 +18,7 @@ const JobDetail = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`/api/jobs/${id}/`);
+        const res = await axios.get(`/jobs/${id}/`);
         setJob(res.data);
         setError(null);
       } catch (err) {

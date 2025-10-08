@@ -21,6 +21,11 @@ fetchCourses();
 
 useEffect(() => {
 const filterCourses = () => {
+if (!Array.isArray(courses)) {
+  setFilteredCourses([]);
+  return;
+}
+
 let filtered = courses;
 
 if (searchTerm) {
@@ -49,13 +54,29 @@ setLoading(true);
 console.log('🔄 Fetching courses...');
 const response = await axios.get('/courses/');
 console.log('📚 Courses response:', response.data);
-setCourses(response.data);
+console.log('📚 Response type:', typeof response.data);
+console.log('📚 Is array:', Array.isArray(response.data));
+
+// Handle different response formats
+let coursesData = response.data;
+if (Array.isArray(coursesData)) {
+  setCourses(coursesData);
+} else if (coursesData && Array.isArray(coursesData.results)) {
+  setCourses(coursesData.results);
+} else if (coursesData && Array.isArray(coursesData.data)) {
+  setCourses(coursesData.data);
+} else {
+  console.warn('⚠️ Unexpected response format:', coursesData);
+  setCourses([]);
+}
+
 setError(null);
 } catch (err) {
 console.error('❌ Error fetching courses:', err);
 console.error('❌ Error details:', err.response?.data);
 console.error('❌ Error status:', err.response?.status);
 setError('ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่');
+setCourses([]);
 } finally {
 setLoading(false);
 }
@@ -82,10 +103,12 @@ setLoading(false);
 // };
 
 const getUniqueLevels = () => {
+if (!Array.isArray(courses)) return [];
 return [...new Set(courses.map(course => course.level))];
 };
 
 const getUniqueCategories = () => {
+if (!Array.isArray(courses)) return [];
 return [...new Set(courses.map(course => course.category))];
 };
 

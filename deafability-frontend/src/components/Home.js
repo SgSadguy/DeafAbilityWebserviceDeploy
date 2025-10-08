@@ -24,17 +24,37 @@ const Home = () => {
     try {
       setLoading(true);
       const response = await axios.get('/courses/');
-      setCourses(response.data);
+      console.log('📚 Home courses response:', response.data);
+      
+      // Handle different response formats
+      let coursesData = response.data;
+      if (Array.isArray(coursesData)) {
+        setCourses(coursesData);
+      } else if (coursesData && Array.isArray(coursesData.results)) {
+        setCourses(coursesData.results);
+      } else if (coursesData && Array.isArray(coursesData.data)) {
+        setCourses(coursesData.data);
+      } else {
+        console.warn('⚠️ Unexpected response format:', coursesData);
+        setCourses([]);
+      }
+      
       setError(null);
     } catch (err) {
       console.error('Error fetching courses:', err);
       setError('ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่');
+      setCourses([]);
     } finally {
       setLoading(false);
     }
   };
 
   const filterCourses = () => {
+    if (!Array.isArray(courses)) {
+      setFilteredCourses([]);
+      return;
+    }
+    
     let filtered = courses;
 
     // ค้นหาตามชื่อ
@@ -58,10 +78,12 @@ const Home = () => {
   };
 
   const getUniqueLevels = () => {
+    if (!Array.isArray(courses)) return [];
     return [...new Set(courses.map(course => course.level))];
   };
 
   const getUniqueCategories = () => {
+    if (!Array.isArray(courses)) return [];
     return [...new Set(courses.map(course => course.category))];
   };
 

@@ -146,11 +146,11 @@ return ( <div className="home-container">
 
   {/* ฟอร์มค้นหาและกรอง */}
   <div className="filter-section">
-    <h1 className="page-title">Courses</h1>
+    <h1 className="page-title">บทเรียน</h1>
     <div className="filter-row">
       <input
         type="text"
-        placeholder="🔍 ค้นหาตามชื่อคอร์ส..."
+        placeholder="🔍 ค้นหาตามชื่อบทเรียน..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className="search-input"
@@ -182,14 +182,14 @@ return ( <div className="home-container">
     </div>
 
     <div className="filter-info">
-      <p>แสดง {filteredCourses.length} จาก {courses.length} คอร์ส</p>
+      <p>แสดง {filteredCourses.length} จาก {courses.length} บทเรียน</p>
     </div>
   </div>
 
   {/* แสดงคอร์ส */}
   {filteredCourses.length === 0 ? (
     <div className="no-courses">
-      <p>📭 ไม่พบคอร์สที่ตรงกับเงื่อนไข</p>
+      <p>📭 ไม่พบบทเรียนที่ตรงกับเงื่อนไข</p>
     </div>
   ) : (
     <div className="course-grid">

@@ -36,10 +36,10 @@ return ( <div className="home-container">
       <button
         className="big-btn course"
         onClick={goToCourseDetail}
-        aria-label="ไปยังรายละเอียดคอร์ส"
+        aria-label="ไปยังรายละเอียดบทเรียน"
       >
         <img src={course_icon} alt="Course Icon" className="icon" />
-        รวมคอร์ส
+        รวมบทเรียน
       </button>
 
       <button

@@ -69,7 +69,7 @@ const JobDetail = () => {
         <div className="error">
           <p>❌ {error}</p>
           <button onClick={handleBackClick} className="back-button">
-            ← กลับไป Jobs
+            ← กลับไป งาน
           </button>
         </div>
       </div>
@@ -82,7 +82,7 @@ const JobDetail = () => {
         <div className="no-courses">
           <p>📭 ไม่พบนงานที่ต้องการ</p>
           <button onClick={handleBackClick} className="back-button">
-            ← กลับไป Jobs
+            ← กลับไป งาน
           </button>
         </div>
       </div>
@@ -127,9 +127,9 @@ const JobDetail = () => {
           )}
 
           <div className="lessons-section">
-            <h3>📚 คอร์สที่เกี่ยวข้อง</h3>
+            <h3>📚 บทเรียนที่เกี่ยวข้อง</h3>
             {(!job.courses || job.courses.length === 0) ? (
-              <p>— ไม่มีคอร์สที่เชื่อมไว้ —</p>
+              <p>— ไม่มีบทเรียนที่เชื่อมไว้ —</p>
             ) : (
               <div className="lessons-list">
                 {job.courses.map((c, index) => (
@@ -155,7 +155,7 @@ const JobDetail = () => {
 
           <div className="course-actions">
             <button onClick={handleBackClick} className="back-button">
-              ← กลับไป Jobs
+              ← กลับไป บทเรียน
             </button>
           </div>
         </div>

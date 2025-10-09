@@ -80,7 +80,7 @@ const CourseDetail = () => {
         <div className="error">
           <p>❌ {error}</p>
           <button onClick={handleBackClick} className="back-button">
-            ← กลับหน้ารวมคอร์ส
+            ← กลับหน้ารวมบทเรียน
           </button>
         </div>
       </div>
@@ -93,7 +93,7 @@ const CourseDetail = () => {
         <div className="no-courses">
           <p>📭 ไม่พบคอร์สที่ต้องการ</p>
           <button onClick={handleBackClick} className="back-button">
-            ← กลับหน้ารวมคอร์ส
+            ← กลับหน้ารวมบทเรียน
           </button>
         </div>
       </div>
@@ -180,7 +180,7 @@ const CourseDetail = () => {
               </div>
             )} */}
             <button onClick={handleBackClick} className="back-button">
-              ← กลับหน้ารวมคอร์ส
+              ← กลับหน้ารวมบทเรียน
             </button>
           </div>
         </div>

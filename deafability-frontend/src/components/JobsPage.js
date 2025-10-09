@@ -99,7 +99,7 @@ export default function JobsPage() {
 
       {/* Filters */}
       <div className="filter-section">
-        <h1 className="page-title">Jobs</h1>
+        <h1 className="page-title">งาน</h1>
 
         <div className="filter-row">
           <input

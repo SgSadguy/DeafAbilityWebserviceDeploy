@@ -1,6 +1,19 @@
 from rest_framework import serializers
-from .models import Course, Lesson, LessonLink, LessonProgress , Job
+from .models import Course, Lesson, LessonLink, LessonProgress , Job ,QuizQuestion
 from urllib.parse import urlparse, parse_qs
+import random
+
+class QuizQuestionSerializer(serializers.ModelSerializer):
+    course_name = serializers.CharField(source="course.name", read_only=True)
+
+    class Meta:
+        model = QuizQuestion
+        fields = ["id", "prompt", "words", "correct_order", "course", "course_name", "created_at"]
+class QuizCheckSerializer(serializers.Serializer):
+    answer = serializers.ListField(
+        child=serializers.CharField(), allow_empty=False, help_text="ลิสต์คำที่ผู้ใช้เรียง"
+    )
+
 
 def youtube_embed(u: str):
     try:
@@ -78,13 +91,16 @@ class LessonSerializer(serializers.ModelSerializer):
     
 class CourseSerializer(serializers.ModelSerializer):
     lessons = LessonSerializer(many=True, read_only=True)
-    
+    cover_url = serializers.SerializerMethodField()
     class Meta:
-        model = Course
-        fields = ['id', 'name', 'level', 'category', 'description', 'lessons', 'created_at', 'updated_at', 'video_url']
-
-
-
+         model = Course
+         fields = "__all__"
+         extra_fields = [] 
+    def get_cover_url(self, obj):
+        request = self.context.get("request")
+        if getattr(obj, "cover", None) and obj.cover:
+            return request.build_absolute_uri(obj.cover.url) if request else obj.cover.url
+        return None
 
 
 class CourseMiniSerializer(serializers.ModelSerializer):
@@ -93,6 +109,7 @@ class CourseMiniSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "level", "category"]
 
 class JobSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
     courses = CourseMiniSerializer(many=True, read_only=True)
 
     class Meta:
@@ -100,9 +117,21 @@ class JobSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
+            "company",
+            "location",
+            "salary",
             "description",
             "position_type",
-            "courses",        # ← รายการคอร์สแบบย่อ
+            "image_url",    
+            "courses",      
             "created_at",
             "updated_at",
         ]
+
+    def get_image_url(self, obj):
+        request = self.context.get("request")
+        if getattr(obj, "image", None) and obj.image:
+            return request.build_absolute_uri(obj.image.url) if request else obj.image.url
+        return None
+
+

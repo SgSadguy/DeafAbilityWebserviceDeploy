@@ -1,16 +1,15 @@
 # views.py
-from rest_framework import viewsets
+from rest_framework import viewsets ,status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from .models import Course, Lesson, LessonProgress, Job
-from .serializers import CourseSerializer, LessonSerializer, CourseProgressSerializer, JobSerializer
+from .models import Course, Lesson, LessonProgress, Job ,QuizQuestion
+from .serializers import CourseSerializer, LessonSerializer, CourseProgressSerializer, JobSerializer ,QuizQuestionSerializer, QuizCheckSerializer
 from django.utils import timezone
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.db.models import Q
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-
 
 # -------------------------------------------
 # CSRF bootstrap (for frontend)
@@ -40,25 +39,22 @@ def reset_course_progress(request, course_id):
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [AllowAny]
 
 
 # -------------------------------------------
 # Course list and detail (API)
 # -------------------------------------------
 @api_view(['GET'])
-@permission_classes([AllowAny])
 def course_list(request):
     courses = Course.objects.all()
-    serializer = CourseSerializer(courses, many=True)
+    serializer = CourseSerializer(courses, many=True, context={"request": request})
     return Response(serializer.data)
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id)
-    serializer = CourseSerializer(course)
+    serializer = CourseSerializer(course, context={"request": request})
     return Response(serializer.data)
 
 
@@ -166,3 +162,55 @@ class JobDetailAPIView(RetrieveAPIView):
     serializer_class = JobSerializer
     queryset = Job.objects.prefetch_related("courses").all()
     lookup_url_kwarg = "job_id"
+
+
+
+
+
+# -------------------------------------------
+# Quiz API
+# -------------------------------------------
+@api_view(["GET"])
+@authentication_classes([])               
+@permission_classes([AllowAny])
+def quiz_list(request):
+    course_id = request.GET.get("course")
+    qs = QuizQuestion.objects.all()
+    if course_id:
+        qs = qs.filter(course_id=course_id)
+    data = QuizQuestionSerializer(qs, many=True).data
+    return Response(data)
+
+
+@api_view(["GET"])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def quiz_detail(request, pk):
+    try:
+        q = QuizQuestion.objects.get(pk=pk)
+    except QuizQuestion.DoesNotExist:
+        return Response({"detail": "Not found"}, status=404)
+    return Response(QuizQuestionSerializer(q).data)
+
+@api_view(["POST"])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def quiz_check(request, pk):
+    try:
+        q = QuizQuestion.objects.get(pk=pk)
+    except QuizQuestion.DoesNotExist:
+        return Response({"detail": "Not found"}, status=404)
+
+    ser = QuizCheckSerializer(data=request.data)
+    ser.is_valid(raise_exception=True)
+    answer = ser.validated_data["answer"]
+
+
+    correct = list(answer) == list(q.correct_order or [])
+
+    return Response({
+        "question_id": q.id,
+        "correct": correct,
+        "expected": q.correct_order,
+        "your_answer": answer,
+    }, status=status.HTTP_200_OK)

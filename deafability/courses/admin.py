@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Course, Lesson, LessonLink,Job
+from .models import Course, Lesson, LessonLink,Job ,QuizQuestion
+
 
 # Register your models here.
 class LessonInline(admin.TabularInline):
@@ -39,13 +40,22 @@ class LessonAdmin(admin.ModelAdmin):
 
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "position_type", "courses_count", "created_at")
-    list_filter  = ("position_type", "created_at")  # ✅ filter ตามตำแหน่งงานที่พิมพ์
-    search_fields = ("title", "description", "position_type", "courses__name")
-    autocomplete_fields = ["courses"]  # พิมพ์หาคอร์สได้
+    list_display = ("id", "title", "position_type"  ,"company", "location", "salary","courses_count", "created_at")
+    list_filter  = ("position_type", "created_at")  
+    list_display = ("title", "company", "location", "salary", "created_at")
+    search_fields = ("title", "company", "location")
+    autocomplete_fields = ["courses"]  
 
     def courses_count(self, obj):
         return obj.courses.count()
     courses_count.short_description = "จำนวนคอร์ส"
 
 
+
+
+
+@admin.register(QuizQuestion)
+class QuizAdmin(admin.ModelAdmin):
+    list_display = ("id", "prompt", "course", "created_at")
+    list_filter = ("course",)
+    search_fields = ("prompt", "course__name")

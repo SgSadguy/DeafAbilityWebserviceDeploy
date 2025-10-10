@@ -1,10 +1,12 @@
 # models.py
 from django.db import models
 from django.conf import settings
+from django.db.models import JSONField      
 
 class Course(models.Model):
     name = models.CharField(max_length=200, verbose_name="ชื่อคอร์ส")
     level = models.CharField(max_length=100, verbose_name="ระดับ")
+    cover = models.ImageField(upload_to="course_covers/", null=True, blank=True)
     category = models.CharField(max_length=100, verbose_name="สายงาน")
     description = models.TextField(blank=True, verbose_name="รายละเอียด")
     video_url = models.URLField(blank=True, verbose_name="ลิงก์วิดีโอ")  # New: single video URL
@@ -80,6 +82,16 @@ class Job(models.Model):
     title = models.CharField(max_length=200, verbose_name="ชื่องาน")
     description = models.TextField(blank=True, verbose_name="รายละเอียดงาน")
     position_type = models.CharField(max_length=200, verbose_name="ตำแหน่งงาน")  
+    company = models.CharField(
+        max_length=200,
+        verbose_name="ชื่อบริษัท",
+        blank=True,             # อนุญาตเว้นว่างในฟอร์ม
+        default=""              # ไม่เป็น NULL แต่เป็นสตริงว่าง
+    )
+    location = models.CharField(max_length=200, verbose_name="สถานที่ทำงาน", blank=True)
+    salary = models.CharField(max_length=100, blank=True, verbose_name="เงินเดือน")
+
+    image = models.ImageField(upload_to="job_images/", null=True, blank=True, verbose_name="รูปภาพงาน/บริษัท")
     courses = models.ManyToManyField(
         "courses.Course", related_name="jobs", blank=True, verbose_name="คอร์สที่เกี่ยวข้อง"
     )
@@ -94,3 +106,20 @@ class Job(models.Model):
 
     def __str__(self):
         return self.title
+
+
+
+class QuizQuestion(models.Model):
+    course = models.ForeignKey(
+        "courses.Course",
+        on_delete=models.CASCADE,
+        related_name="quizzes",
+        verbose_name="คอร์สที่เกี่ยวข้อง"
+    )
+    prompt = models.CharField(max_length=255, verbose_name="คำถาม")
+    words = models.JSONField(default=list, verbose_name="คำที่ให้เลือก")
+    correct_order = models.JSONField(default=list, verbose_name="ลำดับที่ถูกต้อง")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.course.name} - {self.prompt[:40]}"

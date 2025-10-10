@@ -8,7 +8,7 @@ import JobsPage from './components/JobsPage';
 import './App.css';
 import JobDetail from './components/JobDetail';
 import Home2 from './components/Home2';
-
+import QuizPage from './components/QuizPage';
 import axios from './components/utils/api';
 
 function App() {
@@ -26,6 +26,7 @@ function App() {
           <Route path="/course/:id" element={<CourseDetail />} />
           <Route path="/videoplayer/:courseId/:lessonId" element={<VideoPlayer />} />
           <Route path="/courses/:courseId" element={<VideoPlayer />} />
+          <Route path="/quiz/:courseId" element={<QuizPage />} />
         </Routes>
       </div>
     </Router>

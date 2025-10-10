@@ -13,24 +13,21 @@ const CourseDetail = () => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const [progress, setProgress] = useState({
-  //   percent: 0,
-  //   completed_lessons: 0,
-  //   total_lessons: 0,
-  // });
-  
+  const [enrolled, setEnrolled] = useState(false);
+  const [progress, setProgress] = useState({
+    percent: 0,
+    completed_lessons: 0,
+    total_lessons: 0,
+  });
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchCourseDetail();
-      // await fetchProgress();
-    };
-    fetchData();
+    fetchCourseDetail();
+     fetchProgress();
   }, [id]);
 
   const fetchCourseDetail = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`/courses/${id}/`);
+      const response = await axios.get(`/api/courses/${id}/`);
       setCourse(response.data);
       setError(null);
     } catch (err) {
@@ -43,22 +40,42 @@ const CourseDetail = () => {
 
 
 
-  // const fetchProgress = async () => {
-  //   try {
-  //     const res = await axios.get(`/api/courses/${id}/progress/`);
-  //     // ควรได้ { course_id, total_lessons, completed_lessons, percent }
-  //     setProgress({
-  //       percent: res.data?.percent ?? 0,
-  //       completed_lessons: res.data?.completed_lessons ?? 0,
-  //       total_lessons: res.data?.total_lessons ?? 0,
-  //     });
-  //   } catch (e) {
-  //     console.warn('Cannot fetch progress yet. Defaulting to 0.', e);
-  //     setProgress({ percent: 0, completed_lessons: 0, total_lessons: 0 });
-  //   }
-  // };
+  const fetchProgress = async () => {
+    try {
+      const res = await axios.get(`/api/courses/${id}/progress/`);
+      // ควรได้ { course_id, total_lessons, completed_lessons, percent }
+      setProgress({
+        percent: res.data?.percent ?? 0,
+        completed_lessons: res.data?.completed_lessons ?? 0,
+        total_lessons: res.data?.total_lessons ?? 0,
+      });
+    } catch (e) {
+      console.warn('Cannot fetch progress yet. Defaulting to 0.', e);
+      setProgress({ percent: 0, completed_lessons: 0, total_lessons: 0 });
+    }
+  };
 
-  // Removed unused functions
+  const handleEnroll = async () => {
+    try {
+      const response = await axios.post(`/api/courses/${id}/enroll/`);
+      console.log('Enroll response:', response.data);
+      setEnrolled(true);
+      alert('สมัครเรียนสำเร็จ!');
+    } catch (err) {
+      console.error('Error enrolling:', err);
+      alert('ไม่สามารถสมัครเรียนได้');
+    }
+  };
+
+  const handleLessonClick = async (lessonId) => {
+    try {
+      const response = await axios.get(`/api/courses/${id}/lessons/${lessonId}/`);
+    } catch (err) {
+      console.error('Error fetching lesson:', err);
+      alert('ไม่สามารถโหลดบทเรียนได้');
+    }
+    navigate(`/videoplayer/${id}/${lessonId}`);
+  };
 
   const handleBackClick = () => {
     navigate('/courses');
@@ -80,7 +97,7 @@ const CourseDetail = () => {
         <div className="error">
           <p>❌ {error}</p>
           <button onClick={handleBackClick} className="back-button">
-            ← กลับหน้ารวมบทเรียน
+            ← กลับหน้ารวมคอร์ส
           </button>
         </div>
       </div>
@@ -93,7 +110,7 @@ const CourseDetail = () => {
         <div className="no-courses">
           <p>📭 ไม่พบคอร์สที่ต้องการ</p>
           <button onClick={handleBackClick} className="back-button">
-            ← กลับหน้ารวมบทเรียน
+            ← กลับหน้ารวมคอร์ส
           </button>
         </div>
       </div>
@@ -180,7 +197,7 @@ const CourseDetail = () => {
               </div>
             )} */}
             <button onClick={handleBackClick} className="back-button">
-              ← กลับหน้ารวมบทเรียน
+              ← กลับหน้ารวมคอร์ส
             </button>
           </div>
         </div>
@@ -190,4 +207,3 @@ const CourseDetail = () => {
 };
 
 export default CourseDetail;
-

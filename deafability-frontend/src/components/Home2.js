@@ -36,7 +36,7 @@ return ( <div className="home-container">
       <button
         className="big-btn course"
         onClick={goToCourseDetail}
-        aria-label="ไปยังรายละเอียดบทเรียน"
+        aria-label="ไปยังรายละเอียดคอร์ส"
       >
         <img src={course_icon} alt="Course Icon" className="icon" />
         รวมบทเรียน

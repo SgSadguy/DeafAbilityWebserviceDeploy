@@ -15,35 +15,22 @@ const JobDetail = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(`/jobs/${id}/`);
-        setJob(res.data);
-        setError(null);
-      } catch (err) {
-        console.error('Error fetching job detail:', err);
-        setError('ไม่สามารถโหลดข้อมูลงานได้');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    fetchJobDetail();
   }, [id]);
 
-  // const fetchJobDetail = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const res = await axios.get(`/api/jobs/${id}/`);
-  //     setJob(res.data);
-  //     setError(null);
-  //   } catch (err) {
-  //     console.error('Error fetching job detail:', err);
-  //     setError('ไม่สามารถโหลดข้อมูลงานได้');
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const fetchJobDetail = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(`/api/jobs/${id}/`);
+      setJob(res.data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching job detail:', err);
+      setError('ไม่สามารถโหลดข้อมูลงานได้');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleBackClick = () => {
     navigate('/jobs'); // กลับไปหน้ารายการงาน (JobsPage)
@@ -69,7 +56,7 @@ const JobDetail = () => {
         <div className="error">
           <p>❌ {error}</p>
           <button onClick={handleBackClick} className="back-button">
-            ← กลับไป งาน
+            ← กลับไป Jobs
           </button>
         </div>
       </div>
@@ -82,7 +69,7 @@ const JobDetail = () => {
         <div className="no-courses">
           <p>📭 ไม่พบนงานที่ต้องการ</p>
           <button onClick={handleBackClick} className="back-button">
-            ← กลับไป งาน
+            ← กลับไป Jobs
           </button>
         </div>
       </div>
@@ -92,32 +79,63 @@ const JobDetail = () => {
   return (
     <div className="home-container">
       <header className="job-header" role="banner"> 
-                <div className="brand"> 
-                    <img src={logo} alt="DeafAbility Logo" className="logo" />
-                </div>
+        <div className="brand"> 
+          <img src={logo} alt="DeafAbility Logo" className="logo" />
+        </div>
+        <DropdownNav />
+      </header>
 
-    {/* Dropdown Navbar */}
-
-    <DropdownNav />
-  </header>
+      {/* --- HERO (IMAGE + BADGES) --- */}
+      <div className="job-hero">
+        <img
+          src={job.image_url || "https://via.placeholder.com/1200x420?text=No+Image"}
+          alt={job.title}
+          className="job-hero-img"
+          loading="lazy"
+        />
+      <div className="job-hero-badges">
+        {job.position_type && <span className="job-badge">💼 {job.position_type}</span>}
+        {job.location && <span className="job-badge">📍 {job.location}</span>}     {/* ✅ */}
+        {job.salary && <span className="job-badge">💰 {job.salary}</span>}         {/* ✅ */}
+      </div>
+      </div>
+      {/* --- /HERO --- */}
 
       <div className="course-detail">
-
         <div className="course-detail-card">
           <h2 className="course-detail-title">{job.title}</h2>
 
-          <div className="course-detail-info">
-            <div className="info-item">
-              <span className="info-label">🧭 ตำแหน่ง:</span>
-              <span className="info-value">{job.position_type || '—'}</span>
+          {/* company ชัดขึ้น */}
+          {job.company && (
+            <div className="info-item" style={{ marginBottom: 8 }}>
+              <span className="info-label">🏢 บริษัท:</span>
+              <span className="info-value">{job.company}</span>
             </div>
-            <div className="info-item">
-              <span className="info-label">🕒 สร้างเมื่อ:</span>
-              <span className="info-value">
-                {job.created_at ? new Date(job.created_at).toLocaleString() : '—'}
-              </span>
-            </div>
+          )}
+        <div className="course-detail-info">
+          <div className="info-item">
+            <span className="info-label">🧭 ตำแหน่ง:</span>
+            <span className="info-value">{job.position_type || '—'}</span>
           </div>
+
+          <div className="info-item">  {/* ✅ Location */}
+            <span className="info-label">📍 สถานที่:</span>
+            <span className="info-value">{job.location || '—'}</span>
+          </div>
+
+          <div className="info-item">  {/* ✅ Salary */}
+            <span className="info-label">💰 เงินเดือน:</span>
+            <span className="info-value">{job.salary || '—'}</span>
+          </div>
+
+          <div className="info-item">
+            <span className="info-label">🕒 สร้างเมื่อ:</span>
+            <span className="info-value">
+              {job.created_at ? new Date(job.created_at).toLocaleString() : '—'}
+            </span>
+          </div>
+</div>
+
 
           {job.description && (
             <div className="course-description">
@@ -155,7 +173,7 @@ const JobDetail = () => {
 
           <div className="course-actions">
             <button onClick={handleBackClick} className="back-button">
-              ← กลับไป บทเรียน
+              ← กลับไป Jobs
             </button>
           </div>
         </div>

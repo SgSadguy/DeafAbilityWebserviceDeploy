@@ -20,13 +20,26 @@ fetchCourses();
 }, []);
 
 useEffect(() => {
-const filterCourses = () => {
-if (!Array.isArray(courses)) {
-  setFilteredCourses([]);
-  return;
-}
+filterCourses();
+}, [courses, searchTerm, selectedLevel, selectedCategory]);
 
+const fetchCourses = async () => {
+try {
+setLoading(true);
+const response = await axios.get('/api/courses-list/');
+setCourses(response.data);
+setError(null);
+} catch (err) {
+console.error('Error fetching courses:', err);
+setError('ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่');
+} finally {
+setLoading(false);
+}
+};
+
+const filterCourses = () => {
 let filtered = courses;
+
 
 if (searchTerm) {
   filtered = filtered.filter(course =>
@@ -43,72 +56,15 @@ if (selectedCategory) {
 }
 
 setFilteredCourses(filtered);
+
+
 };
-
-filterCourses();
-}, [courses, searchTerm, selectedLevel, selectedCategory]);
-
-const fetchCourses = async () => {
-try {
-setLoading(true);
-console.log('🔄 Fetching courses...');
-const response = await axios.get('/courses/');
-console.log('📚 Courses response:', response.data);
-console.log('📚 Response type:', typeof response.data);
-console.log('📚 Is array:', Array.isArray(response.data));
-
-// Handle different response formats
-let coursesData = response.data;
-if (Array.isArray(coursesData)) {
-  setCourses(coursesData);
-} else if (coursesData && Array.isArray(coursesData.results)) {
-  setCourses(coursesData.results);
-} else if (coursesData && Array.isArray(coursesData.data)) {
-  setCourses(coursesData.data);
-} else {
-  console.warn('⚠️ Unexpected response format:', coursesData);
-  setCourses([]);
-}
-
-setError(null);
-} catch (err) {
-console.error('❌ Error fetching courses:', err);
-console.error('❌ Error details:', err.response?.data);
-console.error('❌ Error status:', err.response?.status);
-setError('ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่');
-setCourses([]);
-} finally {
-setLoading(false);
-}
-};
-
-// const filterCourses = () => {
-// let filtered = courses;
-
-// if (searchTerm) {
-//   filtered = filtered.filter(course =>
-//     course.name.toLowerCase().includes(searchTerm.toLowerCase())
-//   );
-// }
-
-// if (selectedLevel) {
-//   filtered = filtered.filter(course => course.level === selectedLevel);
-// }
-
-// if (selectedCategory) {
-//   filtered = filtered.filter(course => course.category === selectedCategory);
-// }
-
-// setFilteredCourses(filtered);
-// };
 
 const getUniqueLevels = () => {
-if (!Array.isArray(courses)) return [];
 return [...new Set(courses.map(course => course.level))];
 };
 
 const getUniqueCategories = () => {
-if (!Array.isArray(courses)) return [];
 return [...new Set(courses.map(course => course.category))];
 };
 
@@ -146,7 +102,7 @@ return ( <div className="home-container">
 
   {/* ฟอร์มค้นหาและกรอง */}
   <div className="filter-section">
-    <h1 className="page-title">บทเรียน</h1>
+    <h1 className="page-title">บทเรียนทั้งหมด</h1>
     <div className="filter-row">
       <input
         type="text"
@@ -182,32 +138,55 @@ return ( <div className="home-container">
     </div>
 
     <div className="filter-info">
-      <p>แสดง {filteredCourses.length} จาก {courses.length} บทเรียน</p>
+      <p>แสดง {filteredCourses.length} จาก {courses.length} บทเรียนทั้งหมด</p>
     </div>
   </div>
+
+
+
 
   {/* แสดงคอร์ส */}
   {filteredCourses.length === 0 ? (
     <div className="no-courses">
-      <p>📭 ไม่พบบทเรียนที่ตรงกับเงื่อนไข</p>
+      <p>📭 ไม่พบคอร์สที่ตรงกับเงื่อนไข</p>
     </div>
   ) : (
-    <div className="course-grid">
-      {filteredCourses.map((course) => (
-        <div
-          key={course.id}
-          className="course-card"
-          onClick={() => handleCourseClick(course.id)}
-        >
-          <div className="course-title">{course.name}</div>
-          <div className="course-info"><strong>📊 ระดับ:</strong> {course.level}</div>
-          <div className="course-info"><strong>🏷️ สายงาน:</strong> {course.category}</div>
-          {course.description && (
-            <div className="course-description">{course.description}</div>
-          )}
+<div className="course-grid">
+  {filteredCourses.map((course) => (
+    <div
+      key={course.id}
+      className="course-card-fancy"
+      onClick={() => handleCourseClick(course.id)}
+    >
+      {/* รูปภาพ */}
+      <div className="card-image-wrapper">
+        <img
+          src={course.cover_url || "https://via.placeholder.com/400x250?text=No+Image"}
+          alt={course.name}
+          className="course-image"
+          loading="lazy"
+        />
+        {/* overlay icons */}
+        <div className="card-icons">
+          <span className="icon-item">📊 {course.level}</span>
+          <span className="icon-item">🏷️ {course.category}</span>
         </div>
-      ))}
+      </div>
+
+      {/* ส่วนล่าง bubble */}
+      <div className="card-content">
+        <h3 className="course-title">{course.name}</h3>
+        <p className="course-desc">
+          {course.description?.slice(0, 60) || "ไม่มีคำอธิบาย"}...
+        </p>
+        <div className="progress-bar">
+          <div className="progress-fill" style={{ width: "60%" }}></div>
+        </div>
+      </div>
     </div>
+  ))}
+</div>
+
     
   )}
   {/* Footer */}

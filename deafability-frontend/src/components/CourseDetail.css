@@ -300,3 +300,22 @@
   }
 }
 
+
+.job-hero {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 20px;
+  border-radius: 12px;
+  overflow: visible; /* ✅ ให้ภาพโชว์ครบ */
+  background: transparent;
+  box-shadow: none;
+}
+
+.job-hero-img {
+  width: 100%;
+  height: auto;         /* ✅ ให้คำนวณความสูงอัตโนมัติ */
+  display: block;
+  border-radius: 12px;
+  object-fit: contain;  /* ✅ ไม่ตัดขอบ */
+}

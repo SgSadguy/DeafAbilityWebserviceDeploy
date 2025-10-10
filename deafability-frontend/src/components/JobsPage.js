@@ -38,9 +38,7 @@ export default function JobsPage() {
         if (q) params.q = q;
         if (pos) params.position_type = pos;
 
-        console.log('🔄 Fetching jobs...', params);
-        const res = await axios.get('/jobs/', { params });
-        console.log('💼 Jobs response:', res.data);
+        const res = await axios.get('/api/jobs/', { params });
         const items = Array.isArray(res.data) ? res.data : res.data?.results ?? [];
 
         setJobs(items);
@@ -52,9 +50,7 @@ export default function JobsPage() {
         if (pos) nextParams.position_type = pos;
         setSearchParams(nextParams, { replace: true });
       } catch (e) {
-        console.error('❌ Error fetching jobs:', e);
-        console.error('❌ Error details:', e.response?.data);
-        console.error('❌ Error status:', e.response?.status);
+        console.error(e);
         setError('ไม่สามารถโหลดรายการงานได้');
         setJobs([]);
       } finally {
@@ -99,7 +95,7 @@ export default function JobsPage() {
 
       {/* Filters */}
       <div className="filter-section">
-        <h1 className="page-title">งาน</h1>
+        <h1 className="page-title">หางาน</h1>
 
         <div className="filter-row">
           <input
@@ -146,27 +142,49 @@ export default function JobsPage() {
             <p>📭 ไม่พบงานที่ตรงเงื่อนไข</p>
           </div>
         ) : (
-          <div className="course-grid">
+          <div className="job-grid">
             {jobs.map((job) => (
               <div
                 key={job.id}
-                className="course-card"
+                className="job-card-fancy"
                 onClick={() => handleJobClick(job.id)}
               >
-                <div className="course-title">{job.title}</div>
-                <div className="course-info">
-                  <strong>🧭 ตำแหน่ง:</strong> {job.position_type || '—'}
-                </div>
-                {job.description && (
-                  <div className="course-description">
-                    {job.description.length > 120
-                      ? job.description.slice(0, 120) + '…'
-                      : job.description}
+                {/* --- รูปภาพ --- */}
+                <div className="job-image-wrapper">
+                  <img
+                    src={job.image_url || "https://via.placeholder.com/400x250?text=No+Image"}
+                    alt={job.title}
+                    className="job-image"
+                    loading="lazy"
+                  />
+
+                  {/* overlay icons มุมขวา */}
+                  <div className="job-icons">
+                    {job.position_type && <span className="icon-item">💼 {job.position_type}</span>}
+                    {job.location && <span className="icon-item">📍 {job.location}</span>}
                   </div>
-                )}
+                </div>
+
+                {/* --- bubble ด้านล่าง --- */}
+                <div className="job-content">
+                  <h3 className="job-title">{job.title}</h3>
+                  <p className="job-company">{job.company}</p>
+                  {job.salary && (
+                    <p className="job-salary">💰 {job.salary}</p>
+                  )}
+                  <p className="job-desc">
+                    {job.description
+                      ? job.description.slice(0, 80) + (job.description.length > 80 ? "…" : "")
+                      : "ไม่มีรายละเอียดเพิ่มเติม"}
+                  </p>
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{ width: "70%" }}></div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
+
         )}
       </div>
       <footer className="footer" role="contentinfo">

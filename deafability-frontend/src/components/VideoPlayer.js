@@ -22,7 +22,7 @@ export default function VideoPlayer({ course: initialCourse }) {
     const fetchCourse = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`/courses/${courseId}/`);
+        const res = await axios.get(`/api/courses/${courseId}/`);
         setCourse(res.data);
         setError(null);
       } catch (err) {

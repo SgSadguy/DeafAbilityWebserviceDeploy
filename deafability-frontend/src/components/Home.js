@@ -23,38 +23,18 @@ const Home = () => {
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/courses/');
-      console.log('📚 Home courses response:', response.data);
-      
-      // Handle different response formats
-      let coursesData = response.data;
-      if (Array.isArray(coursesData)) {
-        setCourses(coursesData);
-      } else if (coursesData && Array.isArray(coursesData.results)) {
-        setCourses(coursesData.results);
-      } else if (coursesData && Array.isArray(coursesData.data)) {
-        setCourses(coursesData.data);
-      } else {
-        console.warn('⚠️ Unexpected response format:', coursesData);
-        setCourses([]);
-      }
-      
+      const response = await axios.get('/api/courses-list/');
+      setCourses(response.data);
       setError(null);
     } catch (err) {
       console.error('Error fetching courses:', err);
       setError('ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่');
-      setCourses([]);
     } finally {
       setLoading(false);
     }
   };
 
   const filterCourses = () => {
-    if (!Array.isArray(courses)) {
-      setFilteredCourses([]);
-      return;
-    }
-    
     let filtered = courses;
 
     // ค้นหาตามชื่อ
@@ -78,12 +58,10 @@ const Home = () => {
   };
 
   const getUniqueLevels = () => {
-    if (!Array.isArray(courses)) return [];
     return [...new Set(courses.map(course => course.level))];
   };
 
   const getUniqueCategories = () => {
-    if (!Array.isArray(courses)) return [];
     return [...new Set(courses.map(course => course.category))];
   };
 
@@ -110,7 +88,7 @@ const Home = () => {
       <div className="container">
         <div className="header">
           <h1>🎓 DeafAbility</h1>
-          <p>ระบบจัดการคอร์สสำหรับผู้พิการทางการได้ยิน</p>
+          <p>ระบบจัดการบทเรียนสำหรับผู้พิการทางการได้ยิน</p>
         </div>
         <div className="error">
           <p>❌ {error}</p>
@@ -140,14 +118,14 @@ const Home = () => {
         <p>ระบบจัดการคอร์สสำหรับผู้พิการทางการได้ยิน</p>
       </div>
       
-      <h2 className="page-title">📚 คอร์สทั้งหมด</h2>
+      <h2 className="page-title">📚 บทเรียนทั้งหมด</h2>
       
       {/* ฟอร์มค้นหาและกรอง */}
       <div className="filter-section">
         <div className="filter-row">
           <input
             type="text"
-            placeholder="🔍 ค้นหาตามชื่อคอร์ส..."
+            placeholder="🔍 ค้นหาตามชื่อบทเรียน..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
@@ -179,7 +157,7 @@ const Home = () => {
         </div>
         
         <div className="filter-info">
-          <p>แสดง {filteredCourses.length} จาก {courses.length} คอร์ส</p>
+          <p>แสดง {filteredCourses.length} จาก {courses.length} บทเรียนทั้งหมด</p>
         </div>
       </div>
       
@@ -203,7 +181,7 @@ const Home = () => {
             cursor: 'pointer'
           }}
         >
-          💼 ไปยัง Job Page
+          💼 ไปยัง หางาน
         </button>
       </div>
     </div>
@@ -211,7 +189,7 @@ const Home = () => {
 
       {filteredCourses.length === 0 ? (
         <div className="no-courses">
-          <p>📭 ไม่พบคอร์สที่ตรงกับเงื่อนไข</p>
+          <p>📭 ไม่พบบทเรียนที่ตรงกับเงื่อนไข</p>
         </div>
       ) : (
         <div className="course-grid">

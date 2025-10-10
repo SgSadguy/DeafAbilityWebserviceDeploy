@@ -27,7 +27,7 @@ axios.interceptors.request.use((config) => {
 });
 
 const api = axios.create({
-  baseURL: "https://deafabilitywebservicedeploy.onrender.com/api",
+  baseURL: "https://deafabilitywebservicedeploy.onrender.com/",
   withCredentials: true,
   timeout: 10000,
   headers: {

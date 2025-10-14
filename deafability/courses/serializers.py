@@ -34,11 +34,10 @@ def youtube_embed(u: str):
 class LessonLinkSerializer(serializers.ModelSerializer):
     href = serializers.SerializerMethodField()
     embed_url = serializers.SerializerMethodField()
-
+    duration_seconds = serializers.IntegerField(read_only=True)  
     class Meta:
         model = LessonLink
-        fields = ['id', 'title', 'kind','role' ,'href', 'embed_url', 'created_at']
-
+        fields = ['id', 'title', 'kind','role', 'href', 'embed_url', 'duration_seconds', 'created_at']
     def get_href(self, obj):
         request = self.context.get("request")
         if obj.kind == "file" and obj.file:
@@ -62,19 +61,32 @@ class LessonSerializer(serializers.ModelSerializer):
     is_last_lesson = serializers.SerializerMethodField()
     completed = serializers.SerializerMethodField()
     cover_url = serializers.SerializerMethodField()
-    course_video_url = serializers.SerializerMethodField()   # <— เพิ่ม
-    course_id = serializers.IntegerField(source='course.id', read_only=True)  # ถ้า frontend ต้องใช้
-
+    course_video_url = serializers.SerializerMethodField()  
+    course_id = serializers.IntegerField(source='course.id', read_only=True)  
+    lesson_duration_seconds = serializers.SerializerMethodField()  
     class Meta:
         model = Lesson
         fields = [
             'id','title','description','order','links',
-            'next_lesson_id','is_last_lesson','completed',
-            'cover_url',
-            'course_id',          # (ตัวเลือก)
-            'course_video_url',   # <— เพิ่ม
+            'next_lesson_id','is_last_lesson','completed','course_video_url',  
+            'cover_url','course_id',
+            'lesson_duration_seconds',           
             'created_at','updated_at'
         ]
+
+    def get_lesson_duration_seconds(self, obj):
+        # 1) พยายามเลือก main ก่อน
+        main = next((lk for lk in obj.links.all()
+                     if (lk.kind or '').lower() == 'youtube' and (lk.role or '').lower().startswith('main')), None)
+        if main and main.duration_seconds:
+            return main.duration_seconds
+
+        # 2) ไม่เจอ main → รวมทุก youtube link ที่มี duration
+        total = 0
+        for lk in obj.links.all():
+            if (lk.kind or '').lower() == 'youtube' and (lk.duration_seconds or 0) > 0:
+                total += lk.duration_seconds
+        return total or None
 
     def get_course_video_url(self, obj):
         # ถ้าใน model Course มี field video_url (ลิงก์กลางของคอร์ส)
@@ -100,19 +112,40 @@ class LessonSerializer(serializers.ModelSerializer):
             return False
         return LessonProgress.objects.filter(user=user, lesson=obj, completed=True).exists()
     def get_cover_url(self, obj):
-        # ✅ ส่งเป็น relative URL เช่น "/media/lesson_covers/xxx.png"
-        return obj.cover.url if getattr(obj, "cover", None) else None
+        request = self.context.get("request")
+        if getattr(obj, "cover", None) and obj.cover:
+            return request.build_absolute_uri(obj.cover.url) if request else obj.cover.url
+        return None
     
 class CourseSerializer(serializers.ModelSerializer):
     lessons = LessonSerializer(many=True, read_only=True)
     cover_url = serializers.SerializerMethodField()
+    total_duration_seconds = serializers.SerializerMethodField()   # <— เพิ่ม
+
     class Meta:
          model = Course
          fields = "__all__"
-         extra_fields = [] 
+
+    def get_total_duration_seconds(self, obj):
+        total = 0
+        # ถ้า prefetch มาแล้วจะวิ่งเร็วขึ้น (แนะนำให้ prefetch ใน view)
+        for lesson in obj.lessons.all():
+            # ใช้ logic แบบเดียวกับใน LessonSerializer เพื่อกันผลลัพธ์ไม่สอดคล้อง
+            main = next((lk for lk in lesson.links.all()
+                         if (lk.kind or '').lower() == 'youtube' and (lk.role or '').lower().startswith('main')), None)
+            if main and main.duration_seconds:
+                total += main.duration_seconds
+                continue
+            # รวมลิงก์อื่น ๆ
+            for lk in lesson.links.all():
+                if (lk.kind or '').lower() == 'youtube' and (lk.duration_seconds or 0) > 0:
+                    total += lk.duration_seconds
+        return total or None
     def get_cover_url(self, obj):
-        # ✅ relative URL
-        return obj.cover.url if getattr(obj, "cover", None) else None
+        request = self.context.get("request")
+        if getattr(obj, "cover", None) and obj.cover:
+            return request.build_absolute_uri(obj.cover.url) if request else obj.cover.url
+        return None
 
 
 class CourseMiniSerializer(serializers.ModelSerializer):
@@ -140,10 +173,10 @@ class JobSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
 
-
     def get_image_url(self, obj):
-        # ✅ relative URL
-        return obj.image.url if getattr(obj, "image", None) else None
-    
+        request = self.context.get("request")
+        if getattr(obj, "image", None) and obj.image:
+            return request.build_absolute_uri(obj.image.url) if request else obj.image.url
+        return None
 
-    
+

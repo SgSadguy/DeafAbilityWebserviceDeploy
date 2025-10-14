@@ -2,7 +2,7 @@
 from django.db import models
 from django.conf import settings
 from django.db.models import JSONField      
-
+from django.utils import timezone
 class Course(models.Model):
     name = models.CharField(max_length=200, verbose_name="ชื่อคอร์ส")
     level = models.CharField(max_length=100, verbose_name="ระดับ")
@@ -72,10 +72,15 @@ class LessonLink(models.Model):
     role = models.CharField(max_length=16, choices=ROLE_CHOICES, default="main")
     url = models.URLField(blank=True, verbose_name="ลิงก์")
     created_at = models.DateTimeField(auto_now_add=True)
+    duration_seconds = models.PositiveIntegerField(null=True, blank=True)
+    duration_fetched_at = models.DateTimeField(null=True, blank=True)
 
+    def mark_duration(self, seconds: int | None):
+        self.duration_seconds = seconds
+        self.duration_fetched_at = timezone.now()
+        self.save(update_fields=["duration_seconds", "duration_fetched_at"])
     def __str__(self):
         return f"{self.lesson.title} - {self.title} ({self.get_role_display()})"
-
 
 
 

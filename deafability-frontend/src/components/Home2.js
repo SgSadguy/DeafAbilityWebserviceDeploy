@@ -19,7 +19,8 @@ const goToJobs = () => {
 navigate('/profile');
 };
 
-return ( <div className="home-container">
+return ( 
+<div className="home-container">
   <header className="header" role="banner"> 
       <div className="brand"> 
           <img src={logo} alt="DeafAbility Logo" className="logo" />
@@ -54,13 +55,7 @@ return ( <div className="home-container">
     </div>
   </main>
 
-  {/* Footer */}
-  <footer className="footer" role="contentinfo">
-    <div>© {new Date().getFullYear()} DeafAbility</div>
-    <div className="small">
-      ติดต่อ: <a href="/contact">ติดต่อเรา</a>
-    </div>
-  </footer>
+ 
 </div>
 
 

@@ -66,16 +66,21 @@ class CourseViewSet(viewsets.ModelViewSet):
 # -------------------------------------------
 @api_view(['GET'])
 def course_list(request):
-    courses = Course.objects.all()
-    serializer = CourseSerializer(courses, many=True, context={"request": request})
-    return Response(serializer.data)
+    qs = (Course.objects
+          .prefetch_related('lessons__links')   # สำคัญ: ให้รวมคอลัมน์ใหม่มาด้วย
+          .order_by('-created_at'))
+    data = CourseSerializer(qs, many=True, context={'request': request}).data
+    return Response(data)
 
 
 @api_view(['GET'])
 def course_detail(request, course_id):
-    course = get_object_or_404(Course, id=course_id)
-    serializer = CourseSerializer(course, context={"request": request})
-    return Response(serializer.data)
+    course = get_object_or_404(
+        Course.objects.prefetch_related('lessons__links'),
+        id=course_id
+    )
+    ser = CourseSerializer(course, context={'request': request})
+    return Response(ser.data)
 
 
 # -------------------------------------------

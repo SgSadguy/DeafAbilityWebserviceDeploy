@@ -9,6 +9,25 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
   transition: box-shadow 0.3s ease;
 }
+
+
+
+.player-card {
+  background: white;
+  border-radius: 1.5rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  width: 100%;
+  max-width: 1200px; /* prevent it from stretching too wide on large screens */
+  margin: 1rem auto 2rem auto;
+  text-align: center;
+
+  /* Maintain aspect ratio for video */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
 /* VideoPlayer.css */
 .next-cta {
   position: absolute;

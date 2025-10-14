@@ -10,10 +10,10 @@ import JobDetail from './components/JobDetail';
 import Home2 from './components/Home2';
 import QuizPage from './components/QuizPage';
 import axios from './components/utils/api';
-
+import Profile from './components/Profile'
 function App() {
   useEffect(() => {
-    axios.get('/csrf/').catch(() => {});
+    axios.get('/api/csrf/').catch(() => {});
   }, []);
   return (
     <Router>
@@ -27,6 +27,7 @@ function App() {
           <Route path="/videoplayer/:courseId/:lessonId" element={<VideoPlayer />} />
           <Route path="/courses/:courseId" element={<VideoPlayer />} />
           <Route path="/quiz/:courseId" element={<QuizPage />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </div>
     </Router>

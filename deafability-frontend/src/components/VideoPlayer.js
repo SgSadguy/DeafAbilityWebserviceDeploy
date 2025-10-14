@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from './utils/api';
 import './VideoPlayer.css';
+import DropdownNav from './DropdownNav';
+import logo from '../assets/logo_nobg.png';
 
 export default function VideoPlayer({ course: initialCourse, lesson: initialLesson }) {
   const { courseId, lessonId } = useParams();
@@ -214,20 +216,30 @@ useEffect(() => {
   if (!primary) return <p>ไม่พบวิดีโอในบทเรียนนี้</p>;
 
   return (
-    <div className="player-container">
-      <div className="main-player">
-        {primary.type === 'youtube' ? (
-          <div id="yt-iframe" className="yt-player" />
-        ) : (
-          <video
-            ref={html5VideoRef}
-            src={primary.url}
-            controls
-            autoPlay
-            className="html5-player"
+    <div className="home-container">
+      <header className="header" role="banner"> 
+        <div className="brand"> 
+            <img src={logo} alt="DeafAbility Logo" className="logo" />
+        </div>
+
+
+        <DropdownNav />
+      </header>
+      <main className="profile-container">
+      <div className="player-card">
+        <div className="main-player">
+          {primary.type === 'youtube' ? (
+           <div id="yt-iframe" className="yt-player" />
+         ) : (
+           <video
+              ref={html5VideoRef}
+             src={primary.url}
+             controls
+             autoPlay
+             className="html5-player"
           />
-        )}
-      </div>
+         )}
+       </div>
 
       {/* ปุ่มถัดไป */}
       {showNextCta && (
@@ -241,6 +253,9 @@ useEffect(() => {
       <button onClick={() => navigate(-1)} className="back-btn">
         ← กลับ
       </button>
+      
+      </div>
+      </main>
     </div>
   );
 }

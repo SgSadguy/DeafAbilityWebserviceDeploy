@@ -1,10 +1,11 @@
 // src/components/CourseDetail.js
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios, { API_ROOT } from './utils/api'; // ✅ ดึง API_ROOT ให้เหมือนอีกไฟล์
+import axios, { API_ROOT } from './utils/api';
 import DropdownNav from './DropdownNav';
 import logo from '../assets/logo_nobg.png';
 import './CourseDetail.css';
+import { formatSeconds } from './utils/time';
 
 export default function CourseDetail() {
   const { id } = useParams();
@@ -20,7 +21,7 @@ export default function CourseDetail() {
     total_lessons: 0,
   });
 
-  // ✅ ให้เหมือนอีกไฟล์: ใช้ API_ROOT ไม่ใช่ window.location.origin
+  // ใช้ API_ROOT สำหรับสื่อมีเดียให้ถูกโดเมน/พาธ
   const toMediaURL = useCallback((url) => {
     if (!url) return null;
     if (url.startsWith('http')) return url;
@@ -28,7 +29,6 @@ export default function CourseDetail() {
   }, []);
 
   const onImgErr = (e) => {
-    // ป้องกัน loop error หาก fallback เองก็พัง
     if (e.currentTarget.dataset.fallbackApplied === '1') return;
     e.currentTarget.dataset.fallbackApplied = '1';
     e.currentTarget.src =
@@ -41,6 +41,40 @@ export default function CourseDetail() {
   const handleQuizClick = () => {
     navigate(`/quiz/${id}`);
   };
+
+  // ---- เพิ่มจากโค้ดแรก: ตัวคำนวณเวลารวมคอร์สแบบ fallback หลายชั้น ----
+  const calcCourseDuration = (courseData) => {
+    if (!courseData) return 0;
+
+    // 1) เอาค่าจาก backend ถ้ามี
+    if (courseData?.total_duration_seconds) return courseData.total_duration_seconds;
+
+    // 2) รวมจากบทเรียนถ้าบทเรียนมี field duration
+    const sumLessons =
+      courseData?.lessons?.reduce((acc, ls) => {
+        // รองรับหลายชื่อฟิลด์: lesson_duration_seconds, duration_seconds
+        const d =
+          ls.lesson_duration_seconds ??
+          ls.duration_seconds ??
+          0;
+        return acc + (Number.isFinite(d) ? d : 0);
+      }, 0) ?? 0;
+    if (sumLessons > 0) return sumLessons;
+
+    // 3) สำรองสุดท้าย: รวมจากลิงก์ของบทเรียนทุกอัน
+    const sumLinks =
+      courseData?.lessons?.reduce((acc, ls) => {
+        const sub = (ls.links || []).reduce((a, lk) => {
+          const v = lk.duration_seconds ?? 0;
+          return a + (Number.isFinite(v) ? v : 0);
+        }, 0);
+        return acc + sub;
+      }, 0) ?? 0;
+
+    return sumLinks;
+  };
+
+  // ------------------------------------------------------------
 
   const fetchCourseDetail = async () => {
     try {
@@ -108,6 +142,7 @@ export default function CourseDetail() {
     })();
   }, [id]);
 
+  // รีเฟรช progress/course เมื่อกลับจากหน้าวิดีโอ
   useEffect(() => {
     const onFocus = () => {
       if (localStorage.getItem('progress_dirty') === '1') {
@@ -185,6 +220,8 @@ export default function CourseDetail() {
     );
   }
 
+  const totalSeconds = calcCourseDuration(course);
+
   return (
     <div className="cd-page">
       {/* Header */}
@@ -199,7 +236,7 @@ export default function CourseDetail() {
         <div className="cd-card">
           <h1 className="cd-title">{course.name}</h1>
 
-          {/* ✅ ปกคอร์ส: ใช้ toMediaURL + onError */}
+          {/* ปกคอร์ส: ใช้ toMediaURL */}
           {course.cover_url && (
             <div className="cd-hero">
               <img
@@ -212,6 +249,12 @@ export default function CourseDetail() {
             </div>
           )}
 
+          {/* รวมเวลาคอร์ส */}
+          <h2 className="course-total">
+            รวมเวลาคอร์ส: <b>{formatSeconds(totalSeconds)}</b>
+          </h2>
+
+          {/* คำอธิบายคอร์ส */}
           {course.description && (
             <section className="cd-desc">
               <h3>เกี่ยวกับคอร์สนี้</h3>
@@ -219,6 +262,7 @@ export default function CourseDetail() {
             </section>
           )}
 
+          {/* Tiles: ระดับ/หมวด/ความคืบหน้า */}
           <section className="cd-tiles">
             <div className="cd-tile">
               <div className="cd-tile-label">ระดับ</div>
@@ -242,53 +286,66 @@ export default function CourseDetail() {
             </div>
           </section>
 
-{/* รายการบทเรียน */}
-{Array.isArray(course.lessons) && course.lessons.length > 0 ? (
-  <section className="cd-lessons">
-    <h3>รายการบทเรียน</h3>
+          {/* รายการบทเรียน */}
+          {Array.isArray(course.lessons) && course.lessons.length > 0 ? (
+            <section className="cd-lessons">
+              <h3>รายการบทเรียน</h3>
 
-    <div className="cd-lesson-grid">
-      {course.lessons.map((lesson, idx) => {
-        const thumb = toMediaURL(lesson.cover_url || course.cover_url); // ⬅️ สั้นสุด
-        return (
-          <div
-            key={lesson.id}
-            className="cd-lesson-card"
-            role="button"
-            tabIndex={0}
-            onClick={() => handleLessonClick(lesson.id)}
-            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleLessonClick(lesson.id)}
-          >
-            <div className="cd-lesson-thumb">
-              <img
-                src={thumb}
-                alt={lesson.title || course.name}
-                className="course-image"
-                loading="lazy"
-                onError={onImgErr}
-              />
-              <span className="cd-lesson-badge">บทที่ {idx + 1}</span>
-              {lesson.completed && <span className="cd-lesson-badge done">✔ ทำแล้ว</span>}
-              {lesson.duration_seconds != null && (
-                <span className="cd-lesson-badge time">{fmtDur(lesson.duration_seconds)}</span>
-              )}
-            </div>
+              <div className="cd-lesson-grid">
+                {course.lessons.map((lesson, idx) => {
+                  const thumb = toMediaURL(lesson.cover_url || course.cover_url);
+                  // รวมเวลาบทเรียนแบบ fallback หลายชั้น
+                  const lsec =
+                    lesson.lesson_duration_seconds ??
+                    lesson.duration_seconds ??
+                    (lesson.links || []).reduce((a, lk) => a + (lk.duration_seconds ?? 0), 0) ??
+                    0;
 
-            <div className="cd-lesson-body">
-              <h4 className="cd-lesson-title">{lesson.title}</h4>
-              <p className="cd-lesson-desc">
-                {lesson.description?.slice(0, 80) || 'ไม่มีคำอธิบาย'}
-                {lesson.description?.length > 80 ? '...' : ''}
-              </p>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  </section>
-) : (
-  <div className="cd-empty">ยังไม่มีบทเรียนในคอร์สนี้</div>
-)}
+                  return (
+                    <div
+                      key={lesson.id}
+                      className="cd-lesson-card"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => handleLessonClick(lesson.id)}
+                      onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleLessonClick(lesson.id)}
+                    >
+                      <div className="cd-lesson-thumb">
+                        <img
+                          src={thumb}
+                          alt={lesson.title || course.name}
+                          className="course-image"
+                          loading="lazy"
+                          onError={onImgErr}
+                        />
+
+                        {/* Badge มุมซ้าย: บทที่ + เวลา */}
+                        <div className="cd-lesson-badge-group">
+                          <span className="cd-lesson-badge">บทที่ {idx + 1}</span>
+                          {Number.isFinite(lsec) && lsec > 0 && (
+                            <span className="cd-duration-badge">{formatSeconds(lsec)}</span>
+                          )}
+                        </div>
+
+                        {/* ทำแล้ว */}
+                        {lesson.completed && <span className="cd-lesson-badge done">✔ ทำแล้ว</span>}
+                      </div>
+
+                      <div className="cd-lesson-body">
+                        <h4 className="cd-lesson-title">{lesson.title}</h4>
+                        <p className="cd-lesson-desc">
+                          {lesson.description?.slice(0, 80) || 'ไม่มีคำอธิบาย'}
+                          {lesson.description?.length > 80 ? '...' : ''}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ) : (
+            <div className="cd-empty">ยังไม่มีบทเรียนในคอร์สนี้</div>
+          )}
 
           {/* ปุ่มการทำงาน */}
           <div className="cd-actions">

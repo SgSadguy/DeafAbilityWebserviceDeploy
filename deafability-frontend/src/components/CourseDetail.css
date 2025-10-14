@@ -1,321 +1,210 @@
-/* CourseDetail Component Styles */
+/* คอนเทนเนอร์พื้นฐาน */
+.cd-page { background:#f9fafb; min-height:100vh; }
+.cd-container { max-width:1120px; margin:0 auto; padding:16px; }
+.cd-card {
+  background:#fff; border:1px solid #e5e7eb; border-radius:16px;
+  padding:20px; box-shadow:0 4px 18px rgba(0,0,0,.06);
+}
+.cd-error { text-align:center; }
 
-* {
-  margin: 0;
-  padding: 0;
+/* Header */
+.cd-header {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:12px 16px; margin-bottom:8px; background:#fff;
+  border-bottom:1px solid #eef2f7;
+}
+.cd-brand { display:flex; align-items:center; gap:8px; }
+.cd-logo { height:44px; width:auto; }
+
+/* ชื่อคอร์ส */
+.cd-title {
+  text-align:center; font-size:1.8rem; font-weight:800; color:#1f2937; margin:4px 0 12px;
 }
 
-.container {
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #155724;
+/* ปกคอร์ส */
+.cd-hero { margin: 8px 0 14px; border-radius:16px; overflow:hidden; }
+.cd-hero-img { width:100%; height:auto; display:block; object-fit:cover; }
+
+/* คำอธิบายคอร์ส */
+.cd-desc { background:#f3f4f6; border:1px solid #e5e7eb; border-radius:12px; padding:16px; margin: 8px 0 14px; }
+.cd-desc h3 { margin:0 0 8px; color:#111827; }
+.cd-desc p { margin:0; color:#4b5563; line-height:1.6; }
+
+/* ไทล์ข้อมูลคอร์ส */
+.cd-tiles {
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin: 6px 0 6px;
+}
+@media (max-width: 900px) { .cd-tiles { grid-template-columns: 1fr; } }
+
+.cd-tile {
+  background:#eef7f1; border:1px solid #e4efe7; border-radius:14px;
+  padding:16px; text-align:center; box-shadow: inset 0 1px 2px rgba(0,0,0,.03);
+}
+.cd-tile-label { color:#2b5a3a; font-size:.95rem; margin-bottom:8px; }
+.cd-tile-value {
+  display:inline-block; background:#fff; color:#103d25; padding:10px 16px;
+  border-radius:999px; font-weight:800; letter-spacing:.2px; box-shadow:0 1px 2px rgba(0,0,0,.06);
 }
 
-.header {
+/* Progress bar */
+.cd-progress { margin-top:10px; width:100%; height:8px; background:#e5e7eb; border-radius:999px; overflow:hidden; }
+.cd-progress-fill { height:100%; background:linear-gradient(90deg,#34d399,#10b981); }
+
+/* รายการบทเรียน */
+.cd-lessons h3 { text-align:center; color:#111827; margin:12px 0 18px; }
+.cd-lesson-list { display:flex; flex-direction:column; gap:26px; }
+
+/* การ์ดบทเรียน */
+.cd-lesson { border-radius:16px; overflow:visible; cursor:pointer; }
+.cd-lesson-hero { position:relative; border-radius:16px; overflow:hidden; }
+.cd-lesson-hero-img { width:100%; height:auto; display:block; object-fit:cover; }
+
+.cd-chip {
+  position:absolute; top:12px; background:#fff; color:#111;
+  border-radius:999px; padding:6px 12px; font-weight:700; font-size:.95rem;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+}
+.cd-chip-right { right:12px; }
+.cd-chip-left { left:12px; }
+.cd-chip-ghost { background:rgba(255,255,255,.85); margin-top:36px; }
+.cd-chip-done { background:#16a34a; color:#fff; }
+
+.cd-lesson-bubble {
+  background:#fff; border:1px solid #eef1f3; border-radius:16px;
+  width: calc(100% - 24px); margin:-16px auto 0; padding:14px 16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
+}
+.cd-lesson-title { margin:0 0 6px; font-weight:800; color:#1f2937; font-size:1.12rem; }
+.cd-lesson-desc { margin:0; color:#4b5563; line-height:1.55; font-size:1rem; }
+
+/* Hover ไล่เงาเบา ๆ */
+.cd-lesson:hover .cd-lesson-hero-img {
+  filter:brightness(.985); transform:translateY(-1px); transition:.25s ease;
+}
+.cd-lesson:hover .cd-lesson-bubble { box-shadow:0 12px 30px rgba(0,0,0,.16); transition:.25s ease; }
+
+/* ว่างเปล่า */
+.cd-empty { text-align:center; padding:16px; color:#6b7280; }
+
+/* ปุ่ม / แอคชัน */
+.cd-actions {
+  display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:18px;
+}
+.cd-btn {
+  border:none; border-radius:8px; padding:12px 20px; cursor:pointer; font-weight:700; font-size:1rem;
+}
+.cd-btn-green {
+  background:linear-gradient(135deg,#22c55e,#16a34a); color:#fff;
+}
+.cd-btn-green:hover { filter:brightness(1.02); box-shadow:0 6px 16px rgba(34,197,94,.35); }
+.cd-btn-gray {
+  background:#6b7280; color:#fff;
+}
+.cd-btn-gray:hover { filter:brightness(1.03); }
+
+.cd-badge-enrolled {
+  background:#d1fae5; color:#065f46; border:1px solid #a7f3d0;
+  padding:12px 20px; border-radius:8px; font-weight:700;
+}
+
+/* มือถือ */
+@media (max-width: 640px) {
+  .cd-title { font-size:1.5rem; }
+  .cd-desc { padding:14px; }
+  .cd-lesson-bubble { width: calc(100% - 16px); }
+  .cd-chip { font-size:.85rem; padding:5px 10px; }
+}
+
+/* ================== Lesson Grid Responsive ================== */
+.cd-lessons h3 {
   text-align: center;
-  width: 100%;
-  margin-bottom: 30px;
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 15px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  color: #111827;
+  margin: 16px 0 20px;
 }
 
-.header h1 {
-  margin: 0 0 10px 0;
-  font-size: 2.5rem;
-  font-weight: 700;
+.cd-lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
 }
 
-.header p {
-  margin: 0;
-  font-size: 1.1rem;
-  opacity: 0.9;
-}
-
-/* Loading and Error States */
-.loading, .error, .no-courses {
-  text-align: center;
-  padding: 60px 20px;
-  background: #f8f9fa;
-  border-radius: 15px;
-  margin: 20px 0;
-}
-
-.loading p, .error p, .no-courses p {
-  font-size: 1.2rem;
-  margin: 0 0 20px 0;
-  color: #6c757d;
-}
-
-/* Back Button */
-.back-button {
-  background: #6c757d;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
+/* การ์ดแต่ละใบ */
+.cd-lesson-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
   cursor: pointer;
-  font-size: 1rem;
-  margin-bottom: 20px;
-  transition: background 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: all 0.25s ease;
 }
 
-.back-button:hover {
-  background: #5a6268;
+.cd-lesson-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
-/* Course Detail Card */
-.course-detail-card {
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  margin: 1rem;
-  border: 1px solid #e9ecef;
-}
-
-.course-detail-title {
-  margin: 0 0 20px 0;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #2c3e50;
-  text-align: center;
-}
-
-.course-detail-info {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin-bottom: 25px;
-  flex-wrap: wrap;
-}
-
-.info-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-}
-
-.info-label {
-  font-size: 0.9rem;
-  color: #6c757d;
-  font-weight: 500;
-}
-
-.info-value {
-  font-size: 1.1rem;
-  color: #2c3e50;
-  font-weight: 600;
-  background: #f8f9fa;
-  padding: 8px 16px;
-  border-radius: 20px;
-}
-
-.course-description {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 25px;
-}
-
-.course-description h3 {
-  margin: 0 0 15px 0;
-  color: #2c3e50;
-  font-size: 1.3rem;
-}
-
-.course-description p {
-  margin: 0;
-  color: #6c757d;
-  line-height: 1.6;
-  font-size: 1rem;
-}
-
-/* Lessons Section */
-.lessons-section {
-  margin-bottom: 30px;
-}
-
-.lessons-section h3 {
-  margin: 0 0 20px 0;
-  color: #2c3e50;
-  font-size: 1.4rem;
-  text-align: center;
-}
-
-.lessons-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.lesson-item {
-  background: white;
-  border: 2px solid #e9ecef;
-  border-radius: 12px;
-  padding: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.lesson-item:hover {
-  border-color: #667eea;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-}
-
-.lesson-number {
-  background: #667eea;
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-
-.lesson-content {
-  flex: 1;
-}
-
-.lesson-title {
-  margin: 0 0 8px 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-.lesson-description {
-  margin: 0;
-  color: #6c757d;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.lesson-arrow {
-  color: #667eea;
-  font-size: 1.5rem;
-  font-weight: bold;
-  flex-shrink: 0;
-}
-
-/* Course Actions */
-.course-actions {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap;
-  margin-top: 30px;
-}
-
-.enroll-button {
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1.1rem;
-  font-weight: 600;
-  transition: transform 0.2s;
-}
-
-.enroll-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
-}
-
-.enrolled-message {
-  background: #d4edda;
-  color: #155724;
-  padding: 15px 30px;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border: 1px solid #c3e6cb;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .container {
-    padding: 15px;
-  }
-  
-  .header h1 {
-    font-size: 2rem;
-  }
-  
-  .course-detail-title {
-    font-size: 1.6rem;
-  }
-  
-  .course-detail-info {
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-  }
-  
-  .lesson-item {
-    padding: 15px;
-  }
-  
-  .lesson-number {
-    width: 35px;
-    height: 35px;
-    font-size: 1rem;
-  }
-  
-  .course-actions {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .course-detail-card {
-    padding: 20px;
-  }
-  
-  .lesson-item {
-    flex-direction: column;
-    text-align: center;
-    gap: 10px;
-  }
-  
-  .lesson-arrow {
-    transform: rotate(90deg);
-  }
-}
-
-
-.job-hero {
+/* รูปภาพด้านบน */
+.cd-lesson-thumb {
   position: relative;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto 20px;
-  border-radius: 12px;
-  overflow: visible; /* ✅ ให้ภาพโชว์ครบ */
-  background: transparent;
-  box-shadow: none;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  background: #f3f4f6;
 }
 
-.job-hero-img {
+.cd-lesson-thumb img {
   width: 100%;
-  height: auto;         /* ✅ ให้คำนวณความสูงอัตโนมัติ */
+  height: 100%;
+  object-fit: cover;
   display: block;
-  border-radius: 12px;
-  object-fit: contain;  /* ✅ ไม่ตัดขอบ */
+}
+
+/* ป้ายมุม */
+.cd-lesson-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255,255,255,0.9);
+  color: #111827;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+
+.cd-lesson-badge.done {
+  background: #16a34a;
+  color: #fff;
+  right: 10px;
+  left: auto;
+}
+
+/* เนื้อหาการ์ด */
+.cd-lesson-body {
+  padding: 14px 16px 18px;
+}
+
+.cd-lesson-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 6px;
+}
+
+.cd-lesson-desc {
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.45;
+  min-height: 40px;
+}
+
+/* Responsive ปรับระยะห่าง */
+@media (max-width: 640px) {
+  .cd-lesson-grid {
+    gap: 14px;
+  }
+  .cd-lesson-title {
+    font-size: 0.95rem;
+  }
 }

@@ -25,6 +25,7 @@ class Lesson(models.Model):
     order = models.PositiveIntegerField(default=0, verbose_name="ลำดับ")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    cover = models.ImageField(upload_to="lesson_covers/", null=True, blank=True, verbose_name="รูปบทเรียน")
 
     class Meta:
         verbose_name = "บทเรียน"

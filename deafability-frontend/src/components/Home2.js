@@ -5,6 +5,7 @@ import DropdownNav from './DropdownNav';
 import logo from '../assets/logo_nobg.png';
 import course_icon from '../assets/course_icon.png';
 import job_icon from '../assets/job_icon.png';
+import profile_icon from '../assets/profile_icon.png'
 
 const Home = () => {
 const navigate = useNavigate();
@@ -15,7 +16,7 @@ navigate('/courses');
 };
 
 const goToJobs = () => {
-navigate('/jobs');
+navigate('/profile');
 };
 
 return ( <div className="home-container">
@@ -43,12 +44,12 @@ return ( <div className="home-container">
       </button>
 
       <button
-        className="big-btn job"
+        className="big-btn profile"
         onClick={goToJobs}
         aria-label="ไปยังหน้าหางาน"
       >
-        <img src={job_icon} alt="Job Icon" className="icon" />
-        หางาน
+        <img src={profile_icon} alt="Profile Icon" className="icon" />
+        ผู้ใช้งาน
       </button>
     </div>
   </main>

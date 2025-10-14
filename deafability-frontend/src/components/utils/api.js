@@ -1,12 +1,18 @@
 // src/components/utils/api.js
 import axios from 'axios';
 
-// const api = axios.create({
-//   baseURL: process.env.REACT_APP_API_URL || "http://127.0.0.1:8000/api",
-//   withCredentials: true, // if you need CSRF/cookies
-// });
+// ✅ ตรวจสอบ environment
+const isLocal = ["localhost", "127.0.0.1"].includes(window.location.hostname);
 
-// ให้ส่ง/รับ cookie ไป-กลับ (จำเป็นต่อ CSRF ของ Django)
+// ✅ baseURL ตามสถานที่รัน
+export const API_ROOT = isLocal 
+  ? "http://127.0.0.1:8000"  // Local backend
+  : "https://deafabilitywebservicedeploy.onrender.com";  // Production backend
+
+console.log('🌍 Environment:', isLocal ? 'LOCAL' : 'PRODUCTION');
+console.log('🔗 Backend URL:', API_ROOT);
+
+// ส่ง/รับ cookie (จำเป็นต่อ CSRF ของ Django)
 axios.defaults.withCredentials = true;
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -27,7 +33,7 @@ axios.interceptors.request.use((config) => {
 });
 
 const api = axios.create({
-  baseURL: "https://deafabilitywebservicedeploy.onrender.com/",
+  baseURL: API_ROOT,
   withCredentials: true,
   timeout: 10000,
   headers: {
@@ -36,7 +42,7 @@ const api = axios.create({
   }
 });
 
-// Add request interceptor for debugging
+// Request interceptor
 api.interceptors.request.use(
   (config) => {
     console.log('🚀 API Request:', config.method?.toUpperCase(), config.url);
@@ -48,7 +54,7 @@ api.interceptors.request.use(
   }
 );
 
-// Add response interceptor for debugging
+// Response interceptor
 api.interceptors.response.use(
   (response) => {
     console.log('✅ API Response:', response.status, response.config.url);
@@ -61,5 +67,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-
-

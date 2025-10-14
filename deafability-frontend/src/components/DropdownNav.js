@@ -21,8 +21,8 @@ const DropdownNav = () => {
       {isOpen && (
         <div className="menu-dropdown">
           <button className="nav-link" onClick={() => navigate('/')}>หน้าแรก</button>
-          <button className="nav-link" onClick={() => navigate('/courses')}>คอร์ส</button>
-          <button className="nav-link" onClick={() => navigate('/jobs')}>งาน</button>
+          <button className="nav-link" onClick={() => navigate('/courses')}>บทเรียน</button>
+          <button className="nav-link" onClick={() => navigate('/profile')}>ผู้ใช้งาน</button>
         </div>
       )}
     </div>

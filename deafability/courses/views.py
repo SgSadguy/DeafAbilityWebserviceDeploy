@@ -11,6 +11,26 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.db.models import Q
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+# helper: คืน user ที่จะใช้ (จริงหรือ guest)
+def _get_or_create_dev_guest_user():
+    """
+    คืน user ที่ล็อกอินถ้ามี ถ้าไม่มีก็หา/สร้าง user ชื่อ 'guest_dev' แบบไม่ต้องพาสเวิร์ด
+    เฉพาะสำหรับ dev/testing เท่านั้น — ห้ามใช้ใน production
+    """
+    try:
+        # ถ้ามี request.user ที่ authenticated ให้ใช้
+        # (เราเรียก helper จากภายใน view และส่ง request.user ถ้ามี)
+        # แต่ helper นี้ไม่เห็น request, ดังนั้น caller ควรตรวจก่อนเรียก
+        # ใน view ด้านล่างเราจะตรวจและใช้ request.user ถ้า authenticated
+        return None
+    except Exception:
+        return None
+
 # -------------------------------------------
 # CSRF bootstrap (for frontend)
 # -------------------------------------------
@@ -63,18 +83,12 @@ def course_detail(request, course_id):
 # -------------------------------------------
 @api_view(['GET'])
 def lesson_detail(request, course_id, lesson_id):
-    course = get_object_or_404(Course, id=course_id)
-    lesson = get_object_or_404(Lesson, id=lesson_id, course=course)
-
-    data = {
-        'id': lesson.id,
-        'title': lesson.title,
-        'description': lesson.description,
-        'order': lesson.order,
-        'course_id': course.id,
-        'video_url': course.video_url  # <-- new: single video URL per course
-    }
-    return Response(data)
+    lesson = get_object_or_404(
+        Lesson.objects.select_related('course').prefetch_related('links'),
+        id=lesson_id, course_id=course_id
+    )
+    ser = LessonSerializer(lesson, context={'request': request})
+    return Response(ser.data)
 
 
 # -------------------------------------------
@@ -94,9 +108,24 @@ def enroll_course(request, course_id):
 # Mark lesson as complete
 # -------------------------------------------
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])  # ระหว่าง dev ให้เปิดไว้
 def lesson_complete(request, course_id, lesson_id):
-    user = request.user
+    # ใช้ user ที่ล็อกอิน ถ้าไม่มี ให้หา/สร้าง guest_dev
+    if getattr(request, 'user', None) and request.user.is_authenticated:
+        user = request.user
+    else:
+        User = get_user_model()
+        user, _ = User.objects.get_or_create(
+            username='guest_dev',
+            defaults={'is_active': True}
+        )
+        # ให้พาสเวิร์ด unusable เพื่อความปลอดภัย (ถ้ามีไปสร้างผ่าน shell)
+        try:
+            user.set_unusable_password()
+            user.save(update_fields=['password'])
+        except Exception:
+            pass
+
     course = get_object_or_404(Course, id=course_id)
     lesson = get_object_or_404(Lesson, id=lesson_id, course=course)
 
@@ -105,32 +134,51 @@ def lesson_complete(request, course_id, lesson_id):
     obj.completed_at = timezone.now()
     obj.save()
 
+    # คำนวณ progress ใหม่
+    total_lessons = Lesson.objects.filter(course=course).count()
+    completed_lessons = LessonProgress.objects.filter(user=user, course=course, completed=True).count()
+    percent = (completed_lessons / total_lessons * 100.0) if total_lessons else 0.0
+
     return Response({
         'ok': True,
+        'course_id': course.id,
         'lesson_id': lesson.id,
-        'completed': True,
-        'completed_at': obj.completed_at
+        'completed_lessons': completed_lessons,
+        'total_lessons': total_lessons,
+        'percent': round(percent, 2)
     })
-
 
 # -------------------------------------------
 # Course progress (per course)
 # -------------------------------------------
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([AllowAny])  # ระหว่าง dev ให้เปิดไว้
 def course_progress(request, course_id):
-    user = getattr(request, 'user', None)
+    if getattr(request, 'user', None) and request.user.is_authenticated:
+        user = request.user
+    else:
+        User = get_user_model()
+        user, _ = User.objects.get_or_create(
+            username='guest_dev',
+            defaults={'is_active': True}
+        )
+        try:
+            user.set_unusable_password()
+            user.save(update_fields=['password'])
+        except Exception:
+            pass
+
     course = get_object_or_404(Course, id=course_id)
+    total_lessons = Lesson.objects.filter(course=course).count()
+    completed_lessons = LessonProgress.objects.filter(user=user, course=course, completed=True).count()
+    percent = (completed_lessons / total_lessons * 100.0) if total_lessons else 0.0
 
-    total = 1  # each course has 1 video
-    if not user or not getattr(user, 'is_authenticated', False):
-        return Response({'course_id': course.id, 'total_videos': total, 'completed': 0, 'percent': 0.0})
-
-    completed = LessonProgress.objects.filter(user=user, course=course, completed=True).count()
-    percent = (completed / total * 100.0) if total else 0.0
-
-    return Response({'course_id': course.id, 'total_videos': total, 'completed': completed, 'percent': round(percent, 2)})
-
+    return Response({
+        'course_id': course.id,
+        'completed_lessons': completed_lessons,
+        'total_lessons': total_lessons,
+        'percent': round(percent, 2)
+    })
 
 # -------------------------------------------
 # Jobs API

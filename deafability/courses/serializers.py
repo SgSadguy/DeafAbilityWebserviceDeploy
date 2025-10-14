@@ -60,13 +60,25 @@ class LessonSerializer(serializers.ModelSerializer):
     links = LessonLinkSerializer(many=True, read_only=True)
     next_lesson_id = serializers.SerializerMethodField()
     is_last_lesson = serializers.SerializerMethodField()
-    completed = serializers.SerializerMethodField()  
+    completed = serializers.SerializerMethodField()
+    cover_url = serializers.SerializerMethodField()
+    course_video_url = serializers.SerializerMethodField()   # <— เพิ่ม
+    course_id = serializers.IntegerField(source='course.id', read_only=True)  # ถ้า frontend ต้องใช้
 
     class Meta:
         model = Lesson
-        fields = ['id','title','description','order','links',
-                  'next_lesson_id','is_last_lesson','completed',
-                  'created_at','updated_at']
+        fields = [
+            'id','title','description','order','links',
+            'next_lesson_id','is_last_lesson','completed',
+            'cover_url',
+            'course_id',          # (ตัวเลือก)
+            'course_video_url',   # <— เพิ่ม
+            'created_at','updated_at'
+        ]
+
+    def get_course_video_url(self, obj):
+        # ถ้าใน model Course มี field video_url (ลิงก์กลางของคอร์ส)
+        return getattr(obj.course, 'video_url', None)
 
     def _user(self):
         req = self.context.get('request')
@@ -87,7 +99,9 @@ class LessonSerializer(serializers.ModelSerializer):
         if not user or not user.is_authenticated:
             return False
         return LessonProgress.objects.filter(user=user, lesson=obj, completed=True).exists()
-
+    def get_cover_url(self, obj):
+        # ✅ ส่งเป็น relative URL เช่น "/media/lesson_covers/xxx.png"
+        return obj.cover.url if getattr(obj, "cover", None) else None
     
 class CourseSerializer(serializers.ModelSerializer):
     lessons = LessonSerializer(many=True, read_only=True)
@@ -97,10 +111,8 @@ class CourseSerializer(serializers.ModelSerializer):
          fields = "__all__"
          extra_fields = [] 
     def get_cover_url(self, obj):
-        request = self.context.get("request")
-        if getattr(obj, "cover", None) and obj.cover:
-            return request.build_absolute_uri(obj.cover.url) if request else obj.cover.url
-        return None
+        # ✅ relative URL
+        return obj.cover.url if getattr(obj, "cover", None) else None
 
 
 class CourseMiniSerializer(serializers.ModelSerializer):
@@ -128,10 +140,10 @@ class JobSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
 
+
     def get_image_url(self, obj):
-        request = self.context.get("request")
-        if getattr(obj, "image", None) and obj.image:
-            return request.build_absolute_uri(obj.image.url) if request else obj.image.url
-        return None
+        # ✅ relative URL
+        return obj.image.url if getattr(obj, "image", None) else None
+    
 
-
+    

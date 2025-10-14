@@ -13,7 +13,7 @@ import axios from './components/utils/api';
 
 function App() {
   useEffect(() => {
-    axios.get('/api/csrf/').catch(() => {});
+    axios.get('/csrf/').catch(() => {});
   }, []);
   return (
     <Router>

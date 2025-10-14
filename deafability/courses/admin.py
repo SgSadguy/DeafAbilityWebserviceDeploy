@@ -1,14 +1,14 @@
 from django.contrib import admin
 from .models import Course, Lesson, LessonLink,Job ,QuizQuestion
-
+from django.utils.html import mark_safe
 
 # Register your models here.
 class LessonInline(admin.TabularInline):
     model = Lesson
     extra = 0
-    fields = ("title", "order", "description")
+    fields = ("title", "order", "description", "cover")  
     ordering = ("order", "id")
-    can_delete = True  
+    can_delete = True
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
@@ -19,21 +19,29 @@ class CourseAdmin(admin.ModelAdmin):
     ordering = ['-created_at']
 
 
+
 class LessonLinkInline(admin.TabularInline):
     model = LessonLink
     extra = 2
     fields = ('title', 'kind', 'role', 'url')
     ordering = ('id',)
 
+
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    list_display = ("id", "title", "course", "order", "created_at")
+    list_display = ("id", "title", "course", "order", "cover_preview", "created_at")
     inlines = [LessonLinkInline]
     list_filter = ("course",)
     search_fields = ("title", "course__name")
     ordering = ("course", "order", "id")
-    actions = ['delete_selected']  
+    actions = ['delete_selected']
 
+    # ✅ พรีวิวในลิสต์
+    def cover_preview(self, obj):
+        if obj.cover:
+            return mark_safe(f'<img src="{obj.cover.url}" style="height:40px;border-radius:6px" />')
+        return "-"
+    cover_preview.short_description = "รูป"
 
 
 

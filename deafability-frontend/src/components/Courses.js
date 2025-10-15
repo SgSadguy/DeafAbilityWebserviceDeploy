@@ -31,7 +31,7 @@ const fetchCourses = async () => {
 
     // เรียงเก่าสุดก่อน
     const toTs = (c) => Date.parse(c.updated_at || c.created_at || 0) || 0;
-    list = list.sort((a, b) => toTs(a) - toTs(b)); 
+    list = list.sort((a, b) => toTs(b) - toTs(a)); 
 
     setCourses(list);
   } catch (err) {
